@@ -1,0 +1,211 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='black'], [data-theme='dark'] *, [data-theme='black'] *));
+
+/* Theme tokens. The reading theme drives the whole app, so chrome and page always match. */
+:root,
+[data-theme='light'] {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --surface-2: #f2efe8;
+  --fg: #1d1b18;
+  --muted: #6b665d;
+  --border: #e3ded3;
+  --accent: #8a4b14;
+  --accent-fg: #ffffff;
+  --link: #7a3f0c;
+  --highlight: #f6e3a1;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #15171a;
+    --surface: #1c1f23;
+    --surface-2: #24282d;
+    --fg: #e6e2da;
+    --muted: #9a958c;
+    --border: #2f343a;
+    --accent: #e0a15e;
+    --accent-fg: #1a1208;
+    --link: #e8b47a;
+    --highlight: #5a4a1c;
+    color-scheme: dark;
+  }
+}
+
+[data-theme='sepia'] {
+  --bg: #f4ecd8;
+  --surface: #f9f3e3;
+  --surface-2: #ebe0c6;
+  --fg: #3b2f20;
+  --muted: #7a6a52;
+  --border: #ddcfae;
+  --accent: #8a4b14;
+  --accent-fg: #fff8ec;
+  --link: #7a3f0c;
+  --highlight: #ecd58c;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #15171a;
+  --surface: #1c1f23;
+  --surface-2: #24282d;
+  --fg: #e6e2da;
+  --muted: #9a958c;
+  --border: #2f343a;
+  --accent: #e0a15e;
+  --accent-fg: #1a1208;
+  --link: #e8b47a;
+  --highlight: #5a4a1c;
+  color-scheme: dark;
+}
+
+[data-theme='black'] {
+  --bg: #000000;
+  --surface: #0b0b0c;
+  --surface-2: #161618;
+  --fg: #d8d4cc;
+  --muted: #8b877f;
+  --border: #26262a;
+  --accent: #e0a15e;
+  --accent-fg: #000000;
+  --link: #e8b47a;
+  --highlight: #4a3c14;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Literata Variable', Georgia, serif;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Reader ---------------------------------------------------------------------------- */
+
+.reader-content {
+  font-family: var(--reader-font, var(--font-serif));
+  font-size: var(--reader-size, 1.125rem);
+  line-height: var(--reader-leading, 1.65);
+  text-align: var(--reader-align, start);
+  hyphens: var(--reader-hyphens, manual);
+  -webkit-hyphens: var(--reader-hyphens, manual);
+  color: var(--fg);
+  overflow-wrap: break-word;
+}
+
+.reader-content p {
+  margin: 0 0 0.9em;
+}
+.reader-content p + p {
+  text-indent: var(--reader-indent, 0);
+}
+.reader-content h1,
+.reader-content h2,
+.reader-content h3,
+.reader-content h4 {
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  margin: 1.6em 0 0.8em;
+  text-indent: 0;
+  break-after: avoid;
+}
+.reader-content h1 { font-size: 1.7em; }
+.reader-content h2 { font-size: 1.4em; }
+.reader-content h3 { font-size: 1.2em; }
+.reader-content h4 { font-size: 1.05em; }
+.reader-content a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+.reader-content img {
+  display: block;
+  max-width: 100%;
+  max-height: 80vh;
+  height: auto;
+  margin: 1.5em auto;
+  break-inside: avoid;
+}
+.reader-content blockquote {
+  margin: 1em 1.5em;
+  font-style: italic;
+}
+.reader-content hr {
+  border: 0;
+  text-align: center;
+  margin: 2em 0;
+}
+.reader-content hr::after {
+  content: '⁂';
+  color: var(--muted);
+}
+.reader-content table {
+  margin: 1em auto;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+.reader-content td,
+.reader-content th {
+  padding: 0.2em 0.6em;
+  vertical-align: top;
+}
+.reader-content pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+/* Gutenberg poetry: keep line breaks, indent continuation lines */
+.reader-content .poem,
+.reader-content .poetry,
+.reader-content .stanza {
+  text-align: start;
+  margin: 1em 0 1em 1.5em;
+}
+.reader-content .poem .line,
+.reader-content .poetry .line,
+.reader-content .stanza .line {
+  display: block;
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+}
+.reader-content .center,
+.reader-content .c {
+  text-align: center;
+  text-indent: 0;
+}
+/* Gutenberg page-number markers */
+.reader-content .pagenum,
+.reader-content .pageno {
+  display: none;
+}
+
+/* Paginated mode: one CSS column per page, moved with scrollLeft */
+.reader-paged {
+  overflow: hidden;
+}
+.reader-paged .reader-content {
+  height: 100%;
+  column-fill: auto;
+}

@@ -109,6 +109,7 @@ const METHODS = {
 } as const
 
 export async function fetchFollow(follow: Follow, cursor?: string, limit = 30): Promise<Page> {
+  if (follow.kind === 'publication') throw new Error('Not a Bluesky follow')
   const [method, key] = METHODS[follow.kind]
   const res = await xrpc<{ feed: FeedViewPost[]; cursor?: string }>(method, {
     [key]: follow.target,

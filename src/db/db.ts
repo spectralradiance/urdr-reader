@@ -22,10 +22,11 @@ export type ShelfBook = {
 
 export type Follow = {
   id: string
-  source: 'bluesky'
-  kind: 'author' | 'feed' | 'list'
-  /** Handle/DID for authors, at:// URI for feeds and lists. */
+  source: 'bluesky' | 'substack'
+  kind: 'author' | 'feed' | 'list' | 'publication'
+  /** Bluesky: DID for authors, at:// URI for feeds and lists. Substack: the publication's feed URL. */
   target: string
+  avatar?: string
   label: string
   url: string
   addedAt: number

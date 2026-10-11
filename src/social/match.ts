@@ -17,7 +17,7 @@ export function bookMatcher(book: Pick<BookManifest, 'title' | 'authors' | 'sour
 
   return (item: SocialItem): boolean => {
     if (item.links.some((l) => ebookLink.test(l))) return true
-    const text = ` ${norm([item.text, item.embed?.title, item.embed?.description].filter(Boolean).join(' '))} `
+    const text = ` ${norm([item.title, item.text, item.embed?.title, item.embed?.description].filter(Boolean).join(' '))} `
     if (!text.includes(` ${title} `) && !text.includes(` ${titleWords.join(' ')} `)) return false
     // A one-word title ("Beowulf", "Iliad") is distinctive alone, as is a long title;
     // two-word titles need the author too.

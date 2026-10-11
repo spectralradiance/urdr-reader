@@ -1,6 +1,6 @@
 export type SocialItem = {
   id: string
-  source: 'bluesky'
+  source: 'bluesky' | 'substack'
   author: { name: string; handle: string; avatar?: string; url: string }
   text: string
   url: string
@@ -11,6 +11,8 @@ export type SocialItem = {
   images?: { thumb: string; alt: string }[]
   stats?: { likes: number; reposts: number; replies: number }
   repostedBy?: string
+  /** Substack post title; `text` holds the subtitle or an excerpt. */
+  title?: string
   /** Which follow produced this item. */
   via?: string
 }

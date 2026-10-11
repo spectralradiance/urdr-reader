@@ -4,7 +4,7 @@ import { useFollows, useMergedTimeline } from '../../social/hooks.ts'
 import { bookMatcher } from '../../social/match.ts'
 import { PostCard } from './PostCard.tsx'
 
-/** Posts from the reader's followed Bluesky sources that might be about this book. */
+/** Posts and articles from the reader's followed sources that might be about this book. */
 export function ConversationPanel({ book }: { book: BookManifest }) {
   const follows = useFollows()
   const timeline = useMergedTimeline(follows)
@@ -17,7 +17,7 @@ export function ConversationPanel({ book }: { book: BookManifest }) {
 
       {follows && follows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border p-4 text-sm text-muted">
-          Follow a few Bluesky accounts, feeds or lists in the{' '}
+          Follow some Bluesky accounts or Substack publications in the{' '}
           <Link to="/room" className="text-accent underline">Reading Room</Link> to see what people are saying.
         </p>
       ) : timeline.loading ? (

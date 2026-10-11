@@ -1,7 +1,7 @@
 import { useQueries } from '@tanstack/react-query'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Follow } from '../db/db.ts'
-import { fetchFollow } from './bluesky.ts'
+import { fetchFollow } from './sources.ts'
 import type { SocialItem } from './types.ts'
 
 export function useFollows(): Follow[] | undefined {

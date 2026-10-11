@@ -15,13 +15,14 @@ Oct 10, 2026 · Matthew Cooper
 - **Quotes:** select text in the reader to save a quote (highlighted in place), copy it
   with a citation, or share it to Bluesky via the compose link. The Quotes page adds notes,
   per-book filters and Markdown export.
-- **Social:** Bluesky public feeds (accounts, custom feeds, lists) in the Reading Room, plus a
-  per-book "possibly related" panel.
+- **Social:** Bluesky public feeds (accounts, custom feeds, lists) and Substack publications
+  (RSS via the Worker, custom domains included) in the Reading Room, with source filters
+  and a per-book "possibly related" panel.
 - **Hosting:** a Cloudflare Worker serves the app and library as static assets, with an
   allowlisted `/proxy/*`.
 
 **Decisions:** mythology first; Cloudflare for hosting; Bluesky public feeds only (no sign-in
-yet). Substack, Mastodon, on-demand import, free-form highlights and in-book search are still to come.
+yet). Mastodon, on-demand import, free-form highlights and in-book search are still to come.
 
 ## Overview
 

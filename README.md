@@ -2,7 +2,7 @@
 
 A reader for public-domain books from Project Gutenberg, starting with mythology and epics.
 It has scroll and paged reading, a real table of contents, and a "Reading Room" built from
-public Bluesky feeds. See [docs/PLAN.md](docs/PLAN.md) for the plan.
+public Bluesky feeds and Substack RSS. See [docs/PLAN.md](docs/PLAN.md) for the plan.
 
 ## Getting started
 
@@ -32,8 +32,11 @@ shows this as `copyright: false`).
 
 ## Deploying (Cloudflare)
 
-One Worker serves the built app and the library as static assets. It also serves an
-allowlisted, cached `/proxy/*` route (`worker/index.ts`) for on-demand Gutenberg imports later.
+One Worker serves the built app and the library as static assets. It also serves a
+cached `/proxy/*` route (`worker/index.ts`): Substack RSS feeds, which send no CORS headers,
+and Gutendex/Gutenberg for on-demand imports later. The Substack route only fetches `/feed`
+over https and only passes through responses Substack served, so it isn't an open proxy
+(`worker/substack.ts`; the Vite dev server runs the same code).
 
 ```bash
 npx wrangler login
@@ -50,7 +53,7 @@ move it to R2 and set `VITE_LIBRARY_URL`.
 scripts/build-library/   EPUB → static library (Node)
 src/books/               shared types, EPUB parser + serializer (Node and browser), hosted-library hooks
 src/db/                  Dexie (IndexedDB): positions, shelf, follows, settings
-src/social/              Bluesky public-API adapter, merged timeline, post→book matching
+src/social/              Bluesky (public API) and Substack (RSS) adapters, merged timeline, post→book matching
 src/features/            discover, library, reader, social (Reading Room)
 worker/                  Cloudflare Worker (assets + allowlisted proxy)
 ```

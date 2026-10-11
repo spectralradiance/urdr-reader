@@ -12,13 +12,16 @@ Oct 10, 2026 · Matthew Cooper
 - **Reader:** scroll and paged modes (two-page spread on wide screens) that share a text
   anchor, plus a TOC drawer, scrubber, "back to where you were", themes, fonts, keyboard
   and swipe controls, wake lock, and a saved position.
+- **Quotes:** select text in the reader to save a quote (highlighted in place), copy it
+  with a citation, or share it to Bluesky via the compose link. The Quotes page adds notes,
+  per-book filters and Markdown export.
 - **Social:** Bluesky public feeds (accounts, custom feeds, lists) in the Reading Room, plus a
   per-book "possibly related" panel.
 - **Hosting:** a Cloudflare Worker serves the app and library as static assets, with an
   allowlisted `/proxy/*`.
 
 **Decisions:** mythology first; Cloudflare for hosting; Bluesky public feeds only (no sign-in
-yet). Substack, Mastodon, on-demand import and annotations are still to come.
+yet). Substack, Mastodon, on-demand import, free-form highlights and in-book search are still to come.
 
 ## Overview
 

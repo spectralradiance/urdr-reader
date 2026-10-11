@@ -1,4 +1,4 @@
-import { BookOpen, Library, MessagesSquare, Search } from 'lucide-react'
+import { BookOpen, Library, MessagesSquare, Quote, Search } from 'lucide-react'
 import { useEffect } from 'react'
 import { Link, NavLink, Outlet, ScrollRestoration } from 'react-router'
 import { useSettings } from '../features/reader/settings.ts'
@@ -22,6 +22,7 @@ export function RootLayout() {
 const NAV = [
   { to: '/', label: 'Discover', icon: Search, end: true },
   { to: '/library', label: 'Library', icon: Library, end: false },
+  { to: '/quotes', label: 'Quotes', icon: Quote, end: false },
   { to: '/room', label: 'Reading Room', icon: MessagesSquare, end: false },
 ]
 

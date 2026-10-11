@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { BookmarkPlus, Check, ExternalLink, Play } from 'lucide-react'
+import { BookmarkPlus, Check, ExternalLink, Play, Quote } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useLicense, useManifest } from '../../books/hosted.ts'
@@ -17,6 +17,7 @@ export function BookPage() {
   const manifest = useManifest(id)
   const position = useLiveQuery(() => (id ? db.positions.get(id) : undefined), [id])
   const onShelf = useLiveQuery(() => (id ? db.shelf.get(id) : undefined), [id])
+  const quoteCount = useLiveQuery(() => (id ? db.quotes.where('bookId').equals(id).count() : 0), [id])
 
   if (manifest.isLoading) return <Spinner />
   if (manifest.error || !manifest.data) return <ErrorNote error={manifest.error ?? 'Book not found'} />
@@ -59,6 +60,15 @@ export function BookPage() {
               {onShelf ? <Check className="size-4" aria-hidden /> : <BookmarkPlus className="size-4" aria-hidden />}
               {onShelf ? 'In your library' : 'Add to library'}
             </button>
+            {quoteCount ? (
+              <Link
+                to={`/quotes?book=${book.id}`}
+                className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm hover:bg-surface-2"
+              >
+                <Quote className="size-4" aria-hidden />
+                {quoteCount} saved {quoteCount === 1 ? 'quote' : 'quotes'}
+              </Link>
+            ) : null}
           </div>
 
           {book.subjects.length > 0 && (

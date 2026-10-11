@@ -1,0 +1,25 @@
+{
+  "id": "mythology",
+  "title": "Mythology & Epic",
+  "description": "Gods, heroes and the oldest stories: Greek, Roman, Norse, Celtic, Indian, Egyptian and more.",
+  "books": [
+    { "ebookNo": 2199, "note": "The Iliad (Butler, prose)" },
+    { "ebookNo": 1727, "note": "The Odyssey (Butler, prose)" },
+    { "ebookNo": 348, "note": "Hesiod, the Homeric Hymns, and Homerica" },
+    { "ebookNo": 228, "note": "The Aeneid" },
+    { "ebookNo": 21765, "note": "Metamorphoses, Books I-VII" },
+    { "ebookNo": 22381, "note": "Myths and Legends of Ancient Greece and Rome (Berens)" },
+    { "ebookNo": 18947, "note": "The Prose Edda" },
+    { "ebookNo": 16328, "note": "Beowulf (Gummere)" },
+    { "ebookNo": 16464, "note": "Táin Bó Cúalnge" },
+    { "ebookNo": 14244, "note": "The Romance of Tristan and Iseult" },
+    { "ebookNo": 831, "note": "Four Arthurian Romances" },
+    { "ebookNo": 24869, "note": "The Rámáyan of Válmíki" },
+    { "ebookNo": 15474, "note": "The Mahabharata, Volume 1" },
+    { "ebookNo": 2388, "note": "The Song Celestial (Bhagavad Gita)" },
+    { "ebookNo": 69566, "note": "The Egyptian Book of the Dead" },
+    { "ebookNo": 34206, "note": "The Thousand and One Nights, Vol. I" },
+    { "ebookNo": 45634, "note": "Myths of the Cherokee" },
+    { "ebookNo": 42474, "note": "1000 Mythological Characters Briefly Described" }
+  ]
+}

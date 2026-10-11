@@ -1,6 +1,9 @@
 // Cloudflare Worker: serves the built app + hosted library as static assets, and a small
-// allowlisted, cached proxy for sources that block browser requests (CORS).
-// It is deliberately NOT an open proxy: only the hosts below, GET only.
+// cached proxy for sources that block browser requests (CORS).
+// It is deliberately NOT an open proxy: fixed upstream hosts, plus Substack feeds only
+// (see substack.ts), GET only.
+
+import { fetchSubstackFeed } from './substack.ts'
 
 interface Env {
   ASSETS: Fetcher
@@ -18,9 +21,6 @@ export default {
     const url = new URL(request.url)
     const match = url.pathname.match(/^\/proxy\/([a-z]+)(\/.*)?$/)
     if (!match) return env.ASSETS.fetch(request)
-
-    const upstream = UPSTREAMS[match[1]]
-    if (!upstream) return new Response('Unknown upstream', { status: 404 })
     if (request.method !== 'GET') return new Response('Method not allowed', { status: 405 })
 
     const cache = caches.default
@@ -28,14 +28,21 @@ export default {
     const cached = await cache.match(cacheKey)
     if (cached) return cached
 
-    const res = await fetch(`${upstream}${match[2] ?? '/'}${url.search}`, {
-      headers: { 'User-Agent': 'Echtra/0.1 (non-commercial reader; cached proxy)' },
-      cf: { cacheTtl: CACHE_SECONDS, cacheEverything: true },
-    })
-    const out = new Response(res.body, res)
-    out.headers.set('Cache-Control', `public, max-age=${CACHE_SECONDS}`)
-    out.headers.delete('Set-Cookie')
-    if (res.ok) ctx.waitUntil(cache.put(cacheKey, out.clone()))
+    let out: Response
+    if (match[1] === 'substack') {
+      out = await fetchSubstackFeed(url.searchParams.get('url'))
+    } else {
+      const upstream = UPSTREAMS[match[1]]
+      if (!upstream) return new Response('Unknown upstream', { status: 404 })
+      const res = await fetch(`${upstream}${match[2] ?? '/'}${url.search}`, {
+        headers: { 'User-Agent': 'Echtra/0.1 (non-commercial reader; cached proxy)' },
+        cf: { cacheTtl: CACHE_SECONDS, cacheEverything: true },
+      })
+      out = new Response(res.body, res)
+      out.headers.set('Cache-Control', `public, max-age=${CACHE_SECONDS}`)
+      out.headers.delete('Set-Cookie')
+    }
+    if (out.ok) ctx.waitUntil(cache.put(cacheKey, out.clone()))
     return out
   },
 } satisfies ExportedHandler<Env>

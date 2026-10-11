@@ -28,8 +28,10 @@ import {
   type Anchor,
 } from './position.ts'
 import { FONTS, useSettings, type ReaderSettings } from './settings.ts'
+import { SelectionToolbar } from './SelectionToolbar.tsx'
 import { SettingsPanel } from './SettingsPanel.tsx'
 import { TocList } from './TocList.tsx'
+import { useQuoteHighlights } from './useQuoteHighlights.ts'
 
 const HEADER = 56
 const FOOTER = 56
@@ -70,6 +72,7 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
   const html = useMemo(() => (raw.data ? prepareChapter(book.id, raw.data) : ''), [book.id, raw.data])
 
   const contentRef = useRef<HTMLDivElement>(null)
+  useQuoteHighlights(contentRef, book.id, index, html)
   const anchorRef = useRef<Anchor>({ block: 0, offset: 0 })
   const laidOutHtml = useRef('')
   const saveTimer = useRef<number>(undefined)
@@ -461,6 +464,8 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
           </span>
         </button>
       )}
+
+      {!raw.isLoading && <SelectionToolbar contentRef={contentRef} book={book} chapterIndex={index} />}
 
       {panel === 'toc' && (
         <Sheet side="left" title="Contents" onClose={() => setPanel(null)}>

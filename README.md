@@ -1,8 +1,13 @@
-# Echtra
+# Urdr Reader (echtra)
 
-A reader for public-domain books from Project Gutenberg, starting with mythology and epics.
-It has scroll and paged reading, a real table of contents, and a "Reading Room" built from
-public Bluesky feeds and Substack RSS. See [docs/PLAN.md](docs/PLAN.md) for the plan.
+One calm place to read anything long, shown in-app. Today it reads public-domain books from
+Project Gutenberg, starting with mythology and epics, with scroll and paged reading, a real
+table of contents, and a "Reading Room" built from public Bluesky feeds and Substack RSS.
+Next it takes over feed reading (RSS, Substack, news, YouTube) from rhyza, with full text,
+and adds EPUB import, Wikipedia, offline reading and text-to-speech.
+
+Urdr is one of three Norn apps: **Verdandi Writer** is for writing and **Skuldr Social** for
+publishing and people. See [docs/PLAN.md](docs/PLAN.md) for the plan.
 
 ## Getting started
 

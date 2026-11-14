@@ -1,14 +1,7 @@
 {
+  "extends": "@norn-apps/config/tsconfig/base.json",
   "compilerOptions": {
-    "target": "es2023",
-    "lib": ["ES2023"],
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "types": ["@cloudflare/workers-types"],
-    "strict": true,
-    "noEmit": true,
-    "skipLibCheck": true,
-    "allowImportingTsExtensions": true
+    "types": ["@cloudflare/workers-types"]
   },
   "include": ["index.ts"]
 }

@@ -1,0 +1,7 @@
+{
+  "extends": ["./node_modules/@norn-apps/config/oxlint/react.json"],
+  "rules": {
+    "import/no-unassigned-import": "off",
+    "jsx-a11y/prefer-tag-over-role": "off"
+  }
+}

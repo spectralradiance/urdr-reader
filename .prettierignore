@@ -1,0 +1,9 @@
+# Markdown is hand-formatted: Prettier would pad every table column.
+*.md
+
+# Built or downloaded, not written by hand
+dist/
+public/library/
+.cache/
+.wrangler/
+package-lock.json

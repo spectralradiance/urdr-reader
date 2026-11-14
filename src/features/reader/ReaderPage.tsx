@@ -137,7 +137,7 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
       window.clearTimeout(saveTimer.current)
       saveTimer.current = window.setTimeout(flushSave, 400)
     },
-    [book, index, chapter.words, wordsBefore, paged, page, pages, layout.step, layout.width],
+    [book, index, chapter.words, wordsBefore, paged, page, pages, layout.step, layout.width, flushSave],
   )
 
   // Don't lose the last position when the tab is hidden, closed or the reader unmounts.
@@ -150,7 +150,7 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
       window.removeEventListener('pagehide', flushSave)
       flushSave()
     }
-  }, [])
+  }, [flushSave])
 
   // ---- Layout + restoring position --------------------------------------------------------
 
@@ -385,6 +385,7 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
       ) : raw.error ? (
         <ErrorNote error={raw.error} />
       ) : paged ? (
+        // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- tap zones; the keyboard turns pages with ←/→ and PageUp/PageDown
         <div
           className="reader-paged fixed select-text"
           style={{ top: HEADER, height: layout.height, left: (viewport.w - layout.width) / 2, width: layout.width }}
@@ -392,6 +393,7 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
         >
+          {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- delegates clicks on in-book links, which are focusable and fire click on Enter */}
           <div
             ref={contentRef}
             lang={book.language}
@@ -409,6 +411,7 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
         </div>
       ) : (
         <article className="mx-auto px-5 pt-20 pb-36" style={{ maxWidth: `calc(${settings.width} * ${settings.size}px + 40px)` }}>
+          {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- delegates clicks on in-book links, which are focusable and fire click on Enter */}
           <div ref={contentRef} lang={book.language} className="reader-content" style={readerVars} onClick={onContentClick} dangerouslySetInnerHTML={{ __html: html }} />
           <nav className="mt-16 flex items-center justify-between gap-4 border-t border-border pt-6 text-sm">
             {index > 0 ? (
@@ -453,16 +456,15 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
       </footer>
 
       {back && (
-        <button
-          type="button"
-          onClick={goBack}
-          className="fixed bottom-20 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm shadow-lg"
-        >
-          <Undo2 className="size-4" aria-hidden /> Back to where you were
-          <span role="button" tabIndex={0} aria-label="Dismiss" onClick={(e) => { e.stopPropagation(); setBack(null) }} className="ml-1 text-muted">
+        // Two sibling buttons: a control nested inside a <button> can't be reached by keyboard.
+        <div className="fixed bottom-20 left-1/2 z-30 flex -translate-x-1/2 items-center rounded-full border border-border bg-surface text-sm shadow-lg">
+          <button type="button" onClick={goBack} className="flex items-center gap-2 py-2 pr-1.5 pl-4">
+            <Undo2 className="size-4" aria-hidden /> Back to where you were
+          </button>
+          <button type="button" aria-label="Dismiss" onClick={() => setBack(null)} className="py-2 pr-4 pl-1.5 text-muted">
             <X className="size-3.5" aria-hidden />
-          </span>
-        </button>
+          </button>
+        </div>
       )}
 
       {!raw.isLoading && <SelectionToolbar contentRef={contentRef} book={book} chapterIndex={index} />}
@@ -540,6 +542,7 @@ function ChapterScrubber({ book, index, onCommit }: { book: BookManifest; index:
 function Sheet({ side, title, onClose, children }: { side: 'left' | 'right'; title: string; onClose: () => void; children: React.ReactNode }) {
   return (
     <div className="fixed inset-0 z-40" role="dialog" aria-label={title}>
+      {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- the backdrop; Escape and the Close button close the sheet from the keyboard */}
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
       <div className={`absolute inset-y-0 ${side === 'left' ? 'left-0' : 'right-0'} flex w-[min(380px,90vw)] flex-col border-border bg-bg shadow-xl ${side === 'left' ? 'border-r' : 'border-l'}`}>
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">

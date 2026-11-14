@@ -10,7 +10,7 @@ export function LibraryPage() {
   const progress = new Map(positions?.map((p) => [p.bookId, p]) ?? [])
 
   // Most recently read first, then most recently added.
-  const books = [...(shelf ?? [])].sort(
+  const books = (shelf ?? []).toSorted(
     (a, b) => (progress.get(b.bookId)?.updatedAt ?? b.addedAt) - (progress.get(a.bookId)?.updatedAt ?? a.addedAt),
   )
 

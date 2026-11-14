@@ -9,6 +9,7 @@ import { blueskyIntentUrl, quotesToMarkdown, quoteWithCitation } from './quotes.
 export function QuotesPage() {
   const [params, setParams] = useSearchParams()
   const bookFilter = params.get('book')
+  // oxlint-disable-next-line unicorn/no-array-reverse -- Dexie's Collection.reverse() sets the query order; it isn't Array#reverse
   const quotes = useLiveQuery(() => db.quotes.orderBy('createdAt').reverse().toArray(), [])
 
   const books = new Map<string, { title: string; authors: string[]; count: number }>()
@@ -119,6 +120,7 @@ function QuoteCard({ quote: q }: { quote: Quote }) {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- the field appears because you chose "edit note", so focus belongs there
             autoFocus
             aria-label="Note"
             placeholder="Your thoughts on this passage…"

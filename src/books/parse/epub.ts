@@ -171,16 +171,17 @@ export async function parseEpub(data: ArrayBuffer | Uint8Array, parser: DomParse
     return pieces.flatMap((p) => refine(p, subLevel))
   }
 
+  const headingAt = (i: number) => {
+    const node = blocks[i].node
+    if (node.nodeType !== ELEMENT) return undefined
+    const el = node as Element
+    const h = /^h[2-4]$/.test(el.localName) ? el : childElements(el).find((c) => /^h[2-4]$/.test(c.localName))
+    const text = h ? clean(h.textContent) : ''
+    return text && text.length < 120 ? text : undefined
+  }
+
   // No deeper TOC: split at headings in the text, else into roughly even parts at block boundaries.
   const splitUntitled = (range: Range): Range[] => {
-    const headingAt = (i: number) => {
-      const node = blocks[i].node
-      if (node.nodeType !== ELEMENT) return undefined
-      const el = node as Element
-      const h = /^h[2-4]$/.test(el.localName) ? el : childElements(el).find((c) => /^h[2-4]$/.test(c.localName))
-      const text = h ? clean(h.textContent) : ''
-      return text && text.length < 120 ? text : undefined
-    }
     const cuts: { block: number; title: string }[] = []
     let since = 0
     for (let i = range.start + 1; i < range.end; i++) {

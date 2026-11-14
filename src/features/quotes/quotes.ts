@@ -95,7 +95,7 @@ export function quotesToMarkdown(quotes: Quote[]): string {
     const first = qs[0]
     const header = `## ${shortTitle(first.bookTitle)}\n\n${first.authors.map(authorName).join(', ')} · https://www.gutenberg.org/ebooks/${first.ebookNo}`
     const items = qs
-      .sort((a, b) => a.chapterIndex - b.chapterIndex || a.start.block - b.start.block)
+      .toSorted((a, b) => a.chapterIndex - b.chapterIndex || a.start.block - b.start.block)
       .map((q) => {
         const lines = [`> ${q.text.replace(/\n/g, '\n> ')}`, `> — ${displayHeading(q.chapterTitle)}`]
         if (q.note) lines.push('', q.note)

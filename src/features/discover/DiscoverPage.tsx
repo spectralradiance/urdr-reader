@@ -12,6 +12,7 @@ import { ErrorNote, Spinner } from '../../ui/AppShell.tsx'
 export function DiscoverPage() {
   const catalog = useCatalog()
   const [query, setQuery] = useState('')
+  // oxlint-disable-next-line unicorn/no-array-reverse -- Dexie's Collection.reverse() sets the query order; it isn't Array#reverse
   const recent = useLiveQuery(() => db.positions.orderBy('updatedAt').reverse().limit(6).toArray(), [])
 
   const results = useMemo(() => {

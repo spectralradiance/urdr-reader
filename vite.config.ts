@@ -8,12 +8,16 @@ function substackProxy(): Plugin {
   return {
     name: 'echtra-substack-proxy',
     configureServer(server) {
-      server.middlewares.use('/proxy/substack', async (req, res) => {
-        const params = new URL(req.url ?? '', 'http://localhost').searchParams
-        const out = await fetchSubstackFeed(params.get('url'))
-        res.statusCode = out.status
-        out.headers.forEach((value, key) => res.setHeader(key, value))
-        res.end(await out.text())
+      server.middlewares.use('/proxy/substack', (req, res, next) => {
+        const respond = async () => {
+          const params = new URL(req.url ?? '', 'http://localhost').searchParams
+          const out = await fetchSubstackFeed(params.get('url'))
+          res.statusCode = out.status
+          out.headers.forEach((value, key) => res.setHeader(key, value))
+          res.end(await out.text())
+        }
+        // Connect ignores returned promises: pass failures on, or the request hangs.
+        respond().catch(next)
       })
     },
   }

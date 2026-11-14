@@ -92,6 +92,7 @@ export function SelectionToolbar({
   }
 
   return (
+    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus -- the handlers only keep the text selection alive; the buttons inside are the focusable controls
     <div
       role="toolbar"
       aria-label="Selected text"

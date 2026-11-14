@@ -67,3 +67,8 @@ worker/                  Cloudflare Worker (assets + allowlisted proxy)
 
 Books come from [Project Gutenberg](https://www.gutenberg.org). They are public domain in the
 USA. Each book page cites its Gutenberg ebook number and links to the original and its license.
+
+## License
+
+The code is [GPL-3.0-or-later](LICENSE). Forks and modified versions you distribute must
+also be released under the GPL. The books keep their own terms (see *Attribution*).

@@ -35,7 +35,7 @@ export default {
       const upstream = UPSTREAMS[match[1]]
       if (!upstream) return new Response('Unknown upstream', { status: 404 })
       const res = await fetch(`${upstream}${match[2] ?? '/'}${url.search}`, {
-        headers: { 'User-Agent': 'Echtra/0.1 (non-commercial reader; cached proxy)' },
+        headers: { 'User-Agent': 'UrdrReader/0.1 (non-commercial reader; cached proxy)' },
         cf: { cacheTtl: CACHE_SECONDS, cacheEverything: true },
       })
       out = new Response(res.body, res)

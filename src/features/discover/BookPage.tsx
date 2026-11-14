@@ -130,8 +130,8 @@ function Citation({ book }: { book: BookManifest }) {
     <section className="rounded-lg border border-border p-4 text-sm">
       <h2 className="font-medium">Source</h2>
       <p className="mt-2 text-muted">
-        {book.source.name} eBook #{book.source.ebookNo}. Public domain in the USA. Prepared for
-        Echtra on {book.source.processed}.
+        {book.source.name} eBook #{book.source.ebookNo}. Public domain in the USA. Prepared for Urdr
+        on {book.source.processed}.
       </p>
       <a
         href={book.source.url}

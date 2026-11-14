@@ -7,7 +7,7 @@
 
 export const SUBSTACK_CACHE_SECONDS = 15 * 60
 const MAX_BYTES = 5_000_000
-const USER_AGENT = 'Echtra/0.1 (non-commercial reader; RSS via cached proxy)'
+const USER_AGENT = 'UrdrReader/0.1 (non-commercial reader; RSS via cached proxy)'
 
 export async function fetchSubstackFeed(feedParam: string | null): Promise<Response> {
   let origin: URL

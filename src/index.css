@@ -219,7 +219,7 @@ body {
 }
 
 /* Saved quotes (CSS Custom Highlight API; see useQuoteHighlights) */
-::highlight(echtra-quote) {
+::highlight(urdr-quote) {
   background-color: var(--highlight);
   color: inherit;
 }

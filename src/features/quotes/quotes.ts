@@ -123,5 +123,5 @@ export function quotesToMarkdown(quotes: Quote[]): string {
       })
     return [header, ...items].join('\n\n')
   })
-  return `# Quotes from Echtra\n\nExported ${new Date().toISOString().slice(0, 10)}. Texts from Project Gutenberg, public domain in the USA.\n\n${sections.join('\n\n---\n\n')}\n`
+  return `# Quotes from Urdr\n\nExported ${new Date().toISOString().slice(0, 10)}. Texts from Project Gutenberg, public domain in the USA.\n\n${sections.join('\n\n---\n\n')}\n`
 }

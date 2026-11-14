@@ -2,7 +2,7 @@
 
 Oct 10, 2026 · Matthew Cooper · Updated Nov 13, 2026 to match *The Norn Apps: Feature Boundaries*
 
-Urdr Reader (repo: echtra) is one of the three Norn apps. **Urdr is where you take things
+Urdr Reader is one of the three Norn apps. **Urdr is where you take things
 in.** Verdandi Writer is where you write, and Skuldr Social is where you publish and talk
 with people. Urdr hands off to them instead of copying them.
 

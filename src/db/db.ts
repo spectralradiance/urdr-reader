@@ -50,7 +50,7 @@ export type Quote = {
   createdAt: number
 }
 
-export const db = new Dexie('echtra') as Dexie & {
+export const db = new Dexie('urdr') as Dexie & {
   positions: EntityTable<ReadingPosition, 'bookId'>
   shelf: EntityTable<ShelfBook, 'bookId'>
   follows: EntityTable<Follow, 'id'>
@@ -68,3 +68,44 @@ db.version(1).stores({
 db.version(2).stores({
   quotes: 'id, bookId, [bookId+chapterIndex], createdAt',
 })
+
+/** The database's name before the app was renamed from Echtra to Urdr. */
+export const LEGACY_DB_NAME = 'echtra'
+
+/**
+ * Copies a database left under the old name into this one, then deletes the old one, so
+ * nothing is copied twice. Rows already here win over old ones with the same key.
+ */
+export async function migrateLegacyDatabase(target: Dexie, legacyName = LEGACY_DB_NAME) {
+  if (!(await Dexie.exists(legacyName))) return
+  const legacy = new Dexie(legacyName)
+  await legacy.open()
+  const tables = await Promise.all(
+    legacy.tables
+      .filter((t) => target.tables.some((own) => own.name === t.name))
+      .map(async (t) => ({ name: t.name, rows: await t.toArray() })),
+  )
+  legacy.close()
+  await target.transaction('rw', target.tables, async () => {
+    for (const { name, rows } of tables) {
+      const table = target.table(name)
+      // Every table here is keyed by one field of the row (bookId, id or key).
+      const keyPath = table.schema.primKey.keyPath as string
+      const existing = new Set((await table.toCollection().primaryKeys()).map(String))
+      const missing = rows.filter((row) => !existing.has(String(row[keyPath])))
+      if (missing.length) await table.bulkAdd(missing)
+    }
+  })
+  await Dexie.delete(legacyName)
+}
+
+// Runs before any query, so the app never reads the new database half-filled. Sticky, so it
+// also runs if the database is closed and opened again.
+db.on(
+  'ready',
+  (vipDb) =>
+    migrateLegacyDatabase(vipDb).catch((err) =>
+      console.error('Copying the old Echtra database failed', err),
+    ),
+  true,
+)

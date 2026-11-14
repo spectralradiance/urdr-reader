@@ -3,7 +3,7 @@ import { useEffect, type RefObject } from 'react'
 import { db } from '../../db/db.ts'
 import { offsetsToRange } from '../quotes/quotes.ts'
 
-const HIGHLIGHT = 'echtra-quote'
+const HIGHLIGHT = 'urdr-quote'
 
 /**
  * Marks saved quotes in the current chapter using the CSS Custom Highlight API, which paints

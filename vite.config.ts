@@ -6,7 +6,7 @@ import { fetchSubstackFeed } from './worker/substack.ts'
 /** Dev stand-in for the Worker's /proxy/substack route (same code path). */
 function substackProxy(): Plugin {
   return {
-    name: 'echtra-substack-proxy',
+    name: 'urdr-substack-proxy',
     configureServer(server) {
       server.middlewares.use('/proxy/substack', (req, res, next) => {
         const respond = async () => {

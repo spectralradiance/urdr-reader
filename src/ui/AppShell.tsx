@@ -33,7 +33,7 @@ export function AppShell() {
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-4">
           <Link to="/" className="flex items-center gap-2 text-fg">
             <BookOpen className="size-6 text-accent" aria-hidden />
-            <span className="font-serif text-xl font-semibold tracking-tight">Echtra</span>
+            <span className="font-serif text-xl font-semibold tracking-tight">Urdr</span>
           </Link>
           <nav className="ml-auto hidden gap-1 sm:flex" aria-label="Main">
             {NAV.map(({ to, label, end }) => (

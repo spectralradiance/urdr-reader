@@ -23,7 +23,7 @@ export function QuotesPage() {
     const blob = new Blob([quotesToMarkdown(shown)], { type: 'text/markdown' })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
-    a.download = `echtra-quotes-${new Date().toISOString().slice(0, 10)}.md`
+    a.download = `urdr-quotes-${new Date().toISOString().slice(0, 10)}.md`
     a.click()
     URL.revokeObjectURL(a.href)
   }

@@ -1,6 +1,6 @@
 # One Worker serves the app, the hosted library (dist/library) and the /proxy/* routes.
 #   npm run deploy
-name = "echtra"
+name = "urdr-reader"
 main = "worker/index.ts"
 compatibility_date = "2026-09-01"
 

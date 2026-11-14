@@ -20,7 +20,7 @@ const OUT = join(ROOT, 'public/library')
 const CACHE = join(ROOT, '.cache/epub')
 const COLLECTIONS = join(dirname(fileURLToPath(import.meta.url)), 'collections')
 const MIRROR = (process.env.GUTENBERG_MIRROR ?? 'https://www.gutenberg.org').replace(/\/$/, '')
-const USER_AGENT = 'EchtraLibraryBuilder/0.1 (non-commercial reader; one-time downloads, cached)'
+const USER_AGENT = 'UrdrLibraryBuilder/0.1 (non-commercial reader; one-time downloads, cached)'
 const DOWNLOAD_DELAY_MS = 2000
 
 type Collection = {

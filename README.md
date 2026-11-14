@@ -71,4 +71,7 @@ USA. Each book page cites its Gutenberg ebook number and links to the original a
 ## License
 
 The code is [GPL-3.0-or-later](LICENSE). Forks and modified versions you distribute must
-also be released under the GPL. The books keep their own terms (see *Attribution*).
+also be released under the GPL. An [additional permission](LICENSE-EXCEPTION) allows
+distribution through app stores such as Apple's, as long as the source stays freely
+available elsewhere. Contributions are accepted under the same terms. The books keep their
+own terms (see *Attribution*).

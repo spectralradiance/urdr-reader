@@ -36,7 +36,8 @@ async function getFeed(origin: string): Promise<Document> {
   return doc
 }
 
-const childText = (el: Element, tag: string) => el.getElementsByTagName(tag)[0]?.textContent?.trim() ?? ''
+const childText = (el: Element, tag: string) =>
+  el.getElementsByTagName(tag)[0]?.textContent?.trim() ?? ''
 
 export async function resolveSubstack(input: string): Promise<Follow> {
   let origin = parseSubstackInput(input)
@@ -78,7 +79,12 @@ export async function fetchSubstack(follow: Follow): Promise<Page> {
     return {
       id: `substack:${childText(item, 'guid') || link}`,
       source: 'substack',
-      author: { name: author ? `${author} · ${follow.label}` : follow.label, handle: host, avatar: follow.avatar, url: follow.url },
+      author: {
+        name: author ? `${author} · ${follow.label}` : follow.label,
+        handle: host,
+        avatar: follow.avatar,
+        url: follow.url,
+      },
       title: childText(item, 'title'),
       text: subtitle || excerpt(html),
       url: link,
@@ -93,6 +99,10 @@ export async function fetchSubstack(follow: Follow): Promise<Page> {
 }
 
 function excerpt(html: string, max = 280): string {
-  const text = new DOMParser().parseFromString(html, 'text/html').body.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+  const text =
+    new DOMParser()
+      .parseFromString(html, 'text/html')
+      .body.textContent?.replace(/\s+/g, ' ')
+      .trim() ?? ''
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text
 }

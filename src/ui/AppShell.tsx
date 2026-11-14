@@ -65,7 +65,10 @@ export function AppShell() {
       </footer>
 
       {/* Mobile tab bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-border bg-bg/95 backdrop-blur-md sm:hidden" aria-label="Main">
+      <nav
+        className="fixed inset-x-0 bottom-0 z-20 flex border-t border-border bg-bg/95 backdrop-blur-md sm:hidden"
+        aria-label="Main"
+      >
         {NAV.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
@@ -109,7 +112,9 @@ export function ErrorNote({ error }: { error: unknown }) {
   return (
     <div className="mx-auto max-w-md px-4 py-24 text-center">
       <p className="font-medium">Something went wrong</p>
-      <p className="mt-2 text-sm text-muted">{error instanceof Error ? error.message : String(error)}</p>
+      <p className="mt-2 text-sm text-muted">
+        {error instanceof Error ? error.message : String(error)}
+      </p>
     </div>
   )
 }

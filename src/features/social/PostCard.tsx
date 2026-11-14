@@ -18,22 +18,40 @@ export function PostCard({ item, compact = false }: { item: SocialItem; compact?
           <div className="size-8 rounded-full bg-surface-2" />
         )}
         <div className="min-w-0 flex-1">
-          <a href={item.author.url} target="_blank" rel="noreferrer" className="block truncate font-medium hover:underline">
+          <a
+            href={item.author.url}
+            target="_blank"
+            rel="noreferrer"
+            className="block truncate font-medium hover:underline"
+          >
             {item.author.name}
           </a>
           <p className="truncate text-xs text-muted">@{item.author.handle}</p>
         </div>
-        <a href={item.url} target="_blank" rel="noreferrer" className="text-xs text-muted hover:underline">
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noreferrer"
+          className="text-xs text-muted hover:underline"
+        >
           {timeAgo(item.createdAt)}
         </a>
       </header>
 
-      <p className={`mt-3 whitespace-pre-wrap break-words ${compact ? 'line-clamp-6' : ''}`}>{item.text}</p>
+      <p className={`mt-3 whitespace-pre-wrap break-words ${compact ? 'line-clamp-6' : ''}`}>
+        {item.text}
+      </p>
 
       {!compact && item.images && item.images.length > 0 && (
         <div className={`mt-3 grid gap-1 ${item.images.length > 1 ? 'grid-cols-2' : ''}`}>
           {item.images.slice(0, 4).map((img) => (
-            <img key={img.thumb} src={img.thumb} alt={img.alt} loading="lazy" className="max-h-72 w-full rounded object-cover" />
+            <img
+              key={img.thumb}
+              src={img.thumb}
+              alt={img.alt}
+              loading="lazy"
+              className="max-h-72 w-full rounded object-cover"
+            />
           ))}
         </div>
       )}
@@ -45,7 +63,14 @@ export function PostCard({ item, compact = false }: { item: SocialItem; compact?
           rel="noreferrer"
           className="mt-3 flex gap-3 overflow-hidden rounded border border-border hover:bg-surface-2"
         >
-          {item.embed.thumb && !compact && <img src={item.embed.thumb} alt="" className="w-24 shrink-0 object-cover" loading="lazy" />}
+          {item.embed.thumb && !compact && (
+            <img
+              src={item.embed.thumb}
+              alt=""
+              className="w-24 shrink-0 object-cover"
+              loading="lazy"
+            />
+          )}
           <div className="min-w-0 p-2">
             <p className="line-clamp-2 font-medium">{item.embed.title}</p>
             <p className="truncate text-xs text-muted">{new URL(item.embed.url).hostname}</p>
@@ -56,9 +81,18 @@ export function PostCard({ item, compact = false }: { item: SocialItem; compact?
       <footer className="mt-3 flex items-center gap-4 text-xs text-muted">
         {item.stats && (
           <>
-            <span className="flex items-center gap-1"><MessageCircle className="size-3.5" aria-hidden />{item.stats.replies}</span>
-            <span className="flex items-center gap-1"><Repeat2 className="size-3.5" aria-hidden />{item.stats.reposts}</span>
-            <span className="flex items-center gap-1"><Heart className="size-3.5" aria-hidden />{item.stats.likes}</span>
+            <span className="flex items-center gap-1">
+              <MessageCircle className="size-3.5" aria-hidden />
+              {item.stats.replies}
+            </span>
+            <span className="flex items-center gap-1">
+              <Repeat2 className="size-3.5" aria-hidden />
+              {item.stats.reposts}
+            </span>
+            <span className="flex items-center gap-1">
+              <Heart className="size-3.5" aria-hidden />
+              {item.stats.likes}
+            </span>
           </>
         )}
         <a href={item.url} target="_blank" rel="noreferrer" className="ml-auto hover:underline">
@@ -80,20 +114,43 @@ function ArticleCard({ item, compact }: { item: SocialItem; compact: boolean }) 
         ) : (
           <div className="size-8 rounded bg-surface-2" />
         )}
-        <a href={item.author.url} target="_blank" rel="noreferrer" className="min-w-0 flex-1 truncate font-medium hover:underline">
+        <a
+          href={item.author.url}
+          target="_blank"
+          rel="noreferrer"
+          className="min-w-0 flex-1 truncate font-medium hover:underline"
+        >
           {item.author.name}
         </a>
-        <a href={item.url} target="_blank" rel="noreferrer" className="text-xs text-muted hover:underline">
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noreferrer"
+          className="text-xs text-muted hover:underline"
+        >
           {timeAgo(item.createdAt)}
         </a>
       </header>
 
       <a href={item.url} target="_blank" rel="noreferrer" className="mt-3 flex gap-4">
         <div className="min-w-0 flex-1">
-          <h3 className="font-serif text-lg leading-snug font-semibold hover:underline">{item.title}</h3>
-          {item.text && <p className={`mt-1 text-muted ${compact ? 'line-clamp-2' : 'line-clamp-3'}`}>{item.text}</p>}
+          <h3 className="font-serif text-lg leading-snug font-semibold hover:underline">
+            {item.title}
+          </h3>
+          {item.text && (
+            <p className={`mt-1 text-muted ${compact ? 'line-clamp-2' : 'line-clamp-3'}`}>
+              {item.text}
+            </p>
+          )}
         </div>
-        {cover && !compact && <img src={cover} alt="" loading="lazy" className="h-20 w-28 shrink-0 rounded object-cover" />}
+        {cover && !compact && (
+          <img
+            src={cover}
+            alt=""
+            loading="lazy"
+            className="h-20 w-28 shrink-0 rounded object-cover"
+          />
+        )}
       </a>
 
       <footer className="mt-3 flex justify-end text-xs text-muted">

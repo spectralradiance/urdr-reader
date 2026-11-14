@@ -6,7 +6,10 @@ import type { Page, SocialItem } from './types.ts'
 
 const API = 'https://public.api.bsky.app/xrpc'
 
-async function xrpc<T>(method: string, params: Record<string, string | number | undefined>): Promise<T> {
+async function xrpc<T>(
+  method: string,
+  params: Record<string, string | number | undefined>,
+): Promise<T> {
   const qs = new URLSearchParams()
   for (const [k, v] of Object.entries(params)) if (v !== undefined) qs.set(k, String(v))
   const res = await fetch(`${API}/${method}?${qs}`)
@@ -20,8 +23,7 @@ async function xrpc<T>(method: string, params: Record<string, string | number | 
 // ---- Parsing what the user pastes ------------------------------------------------------------
 
 type ParsedTarget =
-  | { kind: 'author'; actor: string }
-  | { kind: 'feed' | 'list'; actor: string; rkey: string }
+  { kind: 'author'; actor: string } | { kind: 'feed' | 'list'; actor: string; rkey: string }
 
 export function parseBlueskyInput(input: string): ParsedTarget | null {
   const s = input.trim()
@@ -33,7 +35,8 @@ export function parseBlueskyInput(input: string): ParsedTarget | null {
     return { kind: web[2] === 'lists' ? 'list' : 'feed', actor: web[1], rkey: web[3] }
   }
   const handle = s.replace(/^@/, '')
-  if (/^did:[a-z]+:[\w.:%-]+$/.test(handle) || /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(handle)) return { kind: 'author', actor: handle }
+  if (/^did:[a-z]+:[\w.:%-]+$/.test(handle) || /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(handle))
+    return { kind: 'author', actor: handle }
   return null
 }
 
@@ -42,7 +45,8 @@ type Profile = { did: string; handle: string; displayName?: string; avatar?: str
 /** Turn a handle, profile URL, feed URL or list URL into a stored Follow. */
 export async function resolveFollow(input: string): Promise<Follow> {
   const target = parseBlueskyInput(input)
-  if (!target) throw new Error('Paste a Bluesky handle, or a profile, feed or list link from bsky.app')
+  if (!target)
+    throw new Error('Paste a Bluesky handle, or a profile, feed or list link from bsky.app')
   const profile = await xrpc<Profile>('app.bsky.actor.getProfile', { actor: target.actor })
   const base = { source: 'bluesky' as const, addedAt: Date.now() }
 
@@ -58,7 +62,10 @@ export async function resolveFollow(input: string): Promise<Follow> {
   }
   if (target.kind === 'feed') {
     const uri = `at://${profile.did}/app.bsky.feed.generator/${target.rkey}`
-    const { view } = await xrpc<{ view: { displayName: string } }>('app.bsky.feed.getFeedGenerator', { feed: uri })
+    const { view } = await xrpc<{ view: { displayName: string } }>(
+      'app.bsky.feed.getFeedGenerator',
+      { feed: uri },
+    )
     return {
       ...base,
       id: `bluesky:feed:${uri}`,
@@ -69,7 +76,10 @@ export async function resolveFollow(input: string): Promise<Follow> {
     }
   }
   const uri = `at://${profile.did}/app.bsky.graph.list/${target.rkey}`
-  const { list } = await xrpc<{ list: { name: string } }>('app.bsky.graph.getList', { list: uri, limit: 1 })
+  const { list } = await xrpc<{ list: { name: string } }>('app.bsky.graph.getList', {
+    list: uri,
+    limit: 1,
+  })
   return {
     ...base,
     id: `bluesky:list:${uri}`,
@@ -94,7 +104,12 @@ type FeedViewPost = {
       createdAt: string
       facets?: { features: { $type: string; uri?: string }[] }[]
     }
-    embed?: { $type: string; external?: External; images?: Images; media?: { images?: Images; external?: External } }
+    embed?: {
+      $type: string
+      external?: External
+      images?: Images
+      media?: { images?: Images; external?: External }
+    }
     likeCount?: number
     repostCount?: number
     replyCount?: number
@@ -124,7 +139,9 @@ function normalize({ post, reason }: FeedViewPost, via: string): SocialItem {
   const rkey = post.uri.split('/').pop()
   const external = post.embed?.external ?? post.embed?.media?.external
   const images = post.embed?.images ?? post.embed?.media?.images
-  const facetLinks = (post.record.facets ?? []).flatMap((f) => f.features.flatMap((x) => (x.uri ? [x.uri] : [])))
+  const facetLinks = (post.record.facets ?? []).flatMap((f) =>
+    f.features.flatMap((x) => (x.uri ? [x.uri] : [])),
+  )
   return {
     id: post.uri + (reason?.by ? `:repost:${reason.by.did}` : ''),
     source: 'bluesky',
@@ -138,9 +155,18 @@ function normalize({ post, reason }: FeedViewPost, via: string): SocialItem {
     url: `https://bsky.app/profile/${post.author.handle}/post/${rkey}`,
     createdAt: post.record.createdAt,
     links: [...facetLinks, ...(external ? [external.uri] : [])],
-    embed: external && { title: external.title, description: external.description, url: external.uri, thumb: external.thumb },
+    embed: external && {
+      title: external.title,
+      description: external.description,
+      url: external.uri,
+      thumb: external.thumb,
+    },
     images: images?.map((i) => ({ thumb: i.thumb, alt: i.alt })),
-    stats: { likes: post.likeCount ?? 0, reposts: post.repostCount ?? 0, replies: post.replyCount ?? 0 },
+    stats: {
+      likes: post.likeCount ?? 0,
+      reposts: post.repostCount ?? 0,
+      replies: post.replyCount ?? 0,
+    },
     repostedBy: reason?.by ? reason.by.displayName || reason.by.handle : undefined,
     via,
   }

@@ -2,7 +2,12 @@ import { Check, Copy, Quote as QuoteIcon, Send } from 'lucide-react'
 import { useEffect, useState, type RefObject } from 'react'
 import type { BookManifest } from '../../books/types.ts'
 import { db, type Quote } from '../../db/db.ts'
-import { blueskyIntentUrl, cleanQuoteText, quoteWithCitation, rangeToOffsets } from '../quotes/quotes.ts'
+import {
+  blueskyIntentUrl,
+  cleanQuoteText,
+  quoteWithCitation,
+  rangeToOffsets,
+} from '../quotes/quotes.ts'
 
 type Pending = { quote: Quote; rect: DOMRect }
 
@@ -78,7 +83,10 @@ export function SelectionToolbar({
 
   const { quote, rect } = pending
   const width = 300
-  const left = Math.min(Math.max(8, rect.left + rect.width / 2 - width / 2), window.innerWidth - width - 8)
+  const left = Math.min(
+    Math.max(8, rect.left + rect.width / 2 - width / 2),
+    window.innerWidth - width - 8,
+  )
   // Above the selection when there's room (clear of the top bar), otherwise below it.
   const top = rect.top > 120 ? rect.top - 52 : Math.min(rect.bottom + 12, window.innerHeight - 120)
 
@@ -104,14 +112,25 @@ export function SelectionToolbar({
     >
       {done ? (
         <span className="flex flex-1 items-center justify-center gap-2 py-1.5 text-accent">
-          <Check className="size-4" aria-hidden /> {done === 'saved' ? 'Quote saved' : 'Copied with citation'}
+          <Check className="size-4" aria-hidden />{' '}
+          {done === 'saved' ? 'Quote saved' : 'Copied with citation'}
         </span>
       ) : (
         <>
-          <button type="button" onClick={save} className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-accent py-1.5 font-medium text-accent-fg">
+          <button
+            type="button"
+            onClick={save}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-accent py-1.5 font-medium text-accent-fg"
+          >
             <QuoteIcon className="size-4" aria-hidden /> Save quote
           </button>
-          <button type="button" onClick={copy} className="grid size-8 place-items-center rounded-full hover:bg-surface-2" aria-label="Copy with citation" title="Copy with citation">
+          <button
+            type="button"
+            onClick={copy}
+            className="grid size-8 place-items-center rounded-full hover:bg-surface-2"
+            aria-label="Copy with citation"
+            title="Copy with citation"
+          >
             <Copy className="size-4" aria-hidden />
           </button>
           <a

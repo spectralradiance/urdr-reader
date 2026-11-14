@@ -11,7 +11,9 @@ export function LibraryPage() {
 
   // Most recently read first, then most recently added.
   const books = (shelf ?? []).toSorted(
-    (a, b) => (progress.get(b.bookId)?.updatedAt ?? b.addedAt) - (progress.get(a.bookId)?.updatedAt ?? a.addedAt),
+    (a, b) =>
+      (progress.get(b.bookId)?.updatedAt ?? b.addedAt) -
+      (progress.get(a.bookId)?.updatedAt ?? a.addedAt),
   )
 
   return (
@@ -20,7 +22,11 @@ export function LibraryPage() {
 
       {shelf?.length === 0 && (
         <p className="mt-6 text-muted">
-          Nothing here yet. <Link to="/" className="text-accent underline">Find something to read</Link>.
+          Nothing here yet.{' '}
+          <Link to="/" className="text-accent underline">
+            Find something to read
+          </Link>
+          .
         </p>
       )}
 
@@ -30,11 +36,21 @@ export function LibraryPage() {
           return (
             <li key={b.bookId}>
               <Link to={p ? `/read/${b.bookId}` : `/book/${b.bookId}`} className="block">
-                <Cover book={{ id: b.bookId, title: b.title, authors: b.authors, cover: b.cover }} />
+                <Cover
+                  book={{ id: b.bookId, title: b.title, authors: b.authors, cover: b.cover }}
+                />
                 <h2 className="mt-3 line-clamp-2 text-sm font-medium">{shortTitle(b.title)}</h2>
-                <p className="line-clamp-1 text-xs text-muted">{b.authors.map(authorName).join(', ') || 'Anonymous'}</p>
-                <div className="mt-2 h-1 overflow-hidden rounded-full bg-surface-2" title={`${Math.round((p?.percent ?? 0) * 100)}% read`}>
-                  <div className="h-full bg-accent" style={{ width: `${Math.round((p?.percent ?? 0) * 100)}%` }} />
+                <p className="line-clamp-1 text-xs text-muted">
+                  {b.authors.map(authorName).join(', ') || 'Anonymous'}
+                </p>
+                <div
+                  className="mt-2 h-1 overflow-hidden rounded-full bg-surface-2"
+                  title={`${Math.round((p?.percent ?? 0) * 100)}% read`}
+                >
+                  <div
+                    className="h-full bg-accent"
+                    style={{ width: `${Math.round((p?.percent ?? 0) * 100)}%` }}
+                  />
                 </div>
               </Link>
             </li>

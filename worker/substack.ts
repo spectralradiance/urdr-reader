@@ -30,13 +30,17 @@ export async function fetchSubstackFeed(feedParam: string | null): Promise<Respo
     return plain(502, 'Could not reach that site')
   }
   if (!res.ok) return plain(res.status === 404 ? 404 : 502, `Feed returned ${res.status}`)
-  if (Number(res.headers.get('content-length') ?? 0) > MAX_BYTES) return plain(413, 'Feed too large')
+  if (Number(res.headers.get('content-length') ?? 0) > MAX_BYTES)
+    return plain(413, 'Feed too large')
 
   const body = await res.text()
   if (body.length > MAX_BYTES) return plain(413, 'Feed too large')
   const servedBySubstack = /substack/i.test(res.headers.get('x-served-by') ?? '')
   const head = body.slice(0, 5000)
-  if (!/<rss[\s>]/i.test(head) || !(servedBySubstack || /<generator>\s*Substack\s*<\/generator>/i.test(head)))
+  if (
+    !/<rss[\s>]/i.test(head) ||
+    !(servedBySubstack || /<generator>\s*Substack\s*<\/generator>/i.test(head))
+  )
     return plain(422, 'That address is not a Substack publication')
 
   return new Response(body, {

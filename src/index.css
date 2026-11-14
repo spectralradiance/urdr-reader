@@ -131,10 +131,18 @@ body {
   text-indent: 0;
   break-after: avoid;
 }
-.reader-content h1 { font-size: 1.7em; }
-.reader-content h2 { font-size: 1.4em; }
-.reader-content h3 { font-size: 1.2em; }
-.reader-content h4 { font-size: 1.05em; }
+.reader-content h1 {
+  font-size: 1.7em;
+}
+.reader-content h2 {
+  font-size: 1.4em;
+}
+.reader-content h3 {
+  font-size: 1.2em;
+}
+.reader-content h4 {
+  font-size: 1.05em;
+}
 .reader-content a {
   color: var(--link);
   text-decoration: underline;

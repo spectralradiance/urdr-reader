@@ -3,12 +3,41 @@
 
 const VOID = new Set(['br', 'hr', 'img', 'col', 'wbr'])
 const DROP = new Set([
-  'script', 'style', 'link', 'meta', 'head', 'title', 'svg', 'math', 'object', 'embed',
-  'iframe', 'form', 'input', 'button', 'select', 'textarea', 'audio', 'video', 'canvas',
+  'script',
+  'style',
+  'link',
+  'meta',
+  'head',
+  'title',
+  'svg',
+  'math',
+  'object',
+  'embed',
+  'iframe',
+  'form',
+  'input',
+  'button',
+  'select',
+  'textarea',
+  'audio',
+  'video',
+  'canvas',
 ])
 const ATTRS = new Set([
-  'id', 'class', 'href', 'src', 'alt', 'title', 'lang', 'dir', 'colspan', 'rowspan',
-  'start', 'width', 'height', 'cite',
+  'id',
+  'class',
+  'href',
+  'src',
+  'alt',
+  'title',
+  'lang',
+  'dir',
+  'colspan',
+  'rowspan',
+  'start',
+  'width',
+  'height',
+  'cite',
 ])
 
 export function serializeNode(node: Node): string {
@@ -24,7 +53,8 @@ export function serializeNode(node: Node): string {
     let name = attr.name.toLowerCase()
     if (name === 'xml:lang') name = 'lang'
     if (!ATTRS.has(name)) continue
-    if ((name === 'href' || name === 'src') && /^\s*(javascript|data|vbscript):/i.test(attr.value)) continue
+    if ((name === 'href' || name === 'src') && /^\s*(javascript|data|vbscript):/i.test(attr.value))
+      continue
     attrs += ` ${name}="${escapeAttr(attr.value)}"`
   }
   if (VOID.has(tag)) return `<${tag}${attrs}>`

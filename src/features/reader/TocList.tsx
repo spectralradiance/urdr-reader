@@ -34,14 +34,23 @@ export function TocList({
   return (
     <ol className="text-sm">
       {tree.map((node, i) => (
-        <TocNode key={i} node={node} current={currentChapter} linkTo={linkTo} onNavigate={onNavigate} />
+        <TocNode
+          key={i}
+          node={node}
+          current={currentChapter}
+          linkTo={linkTo}
+          onNavigate={onNavigate}
+        />
       ))}
     </ol>
   )
 }
 
 function contains(node: Node, chapter: number | undefined): boolean {
-  return chapter !== undefined && (node.entry.chapterIndex === chapter || node.children.some((c) => contains(c, chapter)))
+  return (
+    chapter !== undefined &&
+    (node.entry.chapterIndex === chapter || node.children.some((c) => contains(c, chapter)))
+  )
 }
 
 function TocNode({
@@ -56,7 +65,8 @@ function TocNode({
   onNavigate?: () => void
 }) {
   const [open, setOpen] = useState(() => contains(node, current) && node.children.length < 40)
-  const isCurrent = node.entry.chapterIndex === current && !node.children.some((c) => contains(c, current))
+  const isCurrent =
+    node.entry.chapterIndex === current && !node.children.some((c) => contains(c, current))
   return (
     <li>
       <div className="flex items-center">
@@ -68,7 +78,10 @@ function TocNode({
             aria-label={open ? 'Collapse' : 'Expand'}
             className="grid size-7 shrink-0 place-items-center rounded text-muted hover:bg-surface-2"
           >
-            <ChevronRight className={`size-4 transition-transform ${open ? 'rotate-90' : ''}`} aria-hidden />
+            <ChevronRight
+              className={`size-4 transition-transform ${open ? 'rotate-90' : ''}`}
+              aria-hidden
+            />
           </button>
         ) : (
           <span className="size-7 shrink-0" />
@@ -85,7 +98,13 @@ function TocNode({
       {open && node.children.length > 0 && (
         <ol className="ml-4 border-l border-border pl-1">
           {node.children.map((child, i) => (
-            <TocNode key={i} node={child} current={current} linkTo={linkTo} onNavigate={onNavigate} />
+            <TocNode
+              key={i}
+              node={child}
+              current={current}
+              linkTo={linkTo}
+              onNavigate={onNavigate}
+            />
           ))}
         </ol>
       )}

@@ -18,7 +18,10 @@ export function ConversationPanel({ book }: { book: BookManifest }) {
       {follows && follows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border p-4 text-sm text-muted">
           Follow some Bluesky accounts or Substack publications in the{' '}
-          <Link to="/room" className="text-accent underline">Reading Room</Link> to see what people are saying.
+          <Link to="/room" className="text-accent underline">
+            Reading Room
+          </Link>{' '}
+          to see what people are saying.
         </p>
       ) : timeline.loading ? (
         <p className="text-sm text-muted">Checking your feeds…</p>

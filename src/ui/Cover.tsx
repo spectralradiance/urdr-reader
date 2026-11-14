@@ -31,8 +31,12 @@ export function Cover({
       style={{ background: `hsl(${hue} 35% 28%)`, color: `hsl(${hue} 40% 92%)` }}
       aria-hidden
     >
-      <span className="line-clamp-5 font-serif text-sm leading-snug font-semibold">{shortTitle(book.title)}</span>
-      <span className="line-clamp-2 text-[11px] opacity-80">{book.authors.map(authorName).join(', ')}</span>
+      <span className="line-clamp-5 font-serif text-sm leading-snug font-semibold">
+        {shortTitle(book.title)}
+      </span>
+      <span className="line-clamp-2 text-[11px] opacity-80">
+        {book.authors.map(authorName).join(', ')}
+      </span>
     </div>
   )
 }

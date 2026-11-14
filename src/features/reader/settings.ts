@@ -36,11 +36,15 @@ export const FONTS: Record<ReaderSettings['font'], { label: string; stack: strin
 
 export function useSettings(): [ReaderSettings, (patch: Partial<ReaderSettings>) => void] {
   const stored = useLiveQuery(() => db.settings.get('reader'), [])
-  const settings = { ...DEFAULT_SETTINGS, ...(stored?.value as Partial<ReaderSettings> | undefined) }
+  const settings = {
+    ...DEFAULT_SETTINGS,
+    ...(stored?.value as Partial<ReaderSettings> | undefined),
+  }
   const update = useCallback(
     (patch: Partial<ReaderSettings>) =>
       db.transaction('rw', db.settings, async () => {
-        const current = (await db.settings.get('reader'))?.value as Partial<ReaderSettings> | undefined
+        const current = (await db.settings.get('reader'))?.value as
+          Partial<ReaderSettings> | undefined
         await db.settings.put({ key: 'reader', value: { ...current, ...patch } })
       }),
     [],

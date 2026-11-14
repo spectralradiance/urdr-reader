@@ -19,11 +19,17 @@ function pointOf(content: HTMLElement, node: Node, offset: number): Point | null
   const r = document.createRange()
   r.setStart(block, 0)
   r.setEnd(node, offset)
-  return { block: Array.prototype.indexOf.call(content.children, block), offset: r.toString().length }
+  return {
+    block: Array.prototype.indexOf.call(content.children, block),
+    offset: r.toString().length,
+  }
 }
 
 /** Offsets for a selection range inside the reader content, or null if it's outside it. */
-export function rangeToOffsets(content: HTMLElement, range: Range): { start: Point; end: Point } | null {
+export function rangeToOffsets(
+  content: HTMLElement,
+  range: Range,
+): { start: Point; end: Point } | null {
   const start = pointOf(content, range.startContainer, range.startOffset)
   const end = pointOf(content, range.endContainer, range.endOffset)
   return start && end ? { start, end } : null
@@ -43,7 +49,10 @@ function domPoint(content: HTMLElement, p: Point): { node: Node; offset: number 
   return last ? { node: last, offset: last.data.length } : { node: block, offset: 0 }
 }
 
-export function offsetsToRange(content: HTMLElement, q: Pick<Quote, 'start' | 'end'>): Range | null {
+export function offsetsToRange(
+  content: HTMLElement,
+  q: Pick<Quote, 'start' | 'end'>,
+): Range | null {
   const s = domPoint(content, q.start)
   const e = domPoint(content, q.end)
   if (!s || !e) return null
@@ -70,7 +79,9 @@ export function cleanQuoteText(text: string): string {
 
 export function citation(q: Pick<Quote, 'authors' | 'bookTitle' | 'chapterTitle'>): string {
   const author = q.authors.map(authorName).join(', ')
-  return [author, shortTitle(q.bookTitle), displayHeading(q.chapterTitle)].filter(Boolean).join(', ')
+  return [author, shortTitle(q.bookTitle), displayHeading(q.chapterTitle)]
+    .filter(Boolean)
+    .join(', ')
 }
 
 export function quoteWithCitation(q: Quote): string {
@@ -84,7 +95,13 @@ export function blueskyIntentUrl(q: Quote): string {
   const tail = `\n— ${citation(q)}`
   const room = BLUESKY_LIMIT - tail.length - 2
   const chars = [...q.text]
-  const body = chars.length > room ? `${chars.slice(0, room - 1).join('').trimEnd()}…` : q.text
+  const body =
+    chars.length > room
+      ? `${chars
+          .slice(0, room - 1)
+          .join('')
+          .trimEnd()}…`
+      : q.text
   return `https://bsky.app/intent/compose?text=${encodeURIComponent(`“${body}”${tail}`)}`
 }
 
@@ -97,7 +114,10 @@ export function quotesToMarkdown(quotes: Quote[]): string {
     const items = qs
       .toSorted((a, b) => a.chapterIndex - b.chapterIndex || a.start.block - b.start.block)
       .map((q) => {
-        const lines = [`> ${q.text.replace(/\n/g, '\n> ')}`, `> — ${displayHeading(q.chapterTitle)}`]
+        const lines = [
+          `> ${q.text.replace(/\n/g, '\n> ')}`,
+          `> — ${displayHeading(q.chapterTitle)}`,
+        ]
         if (q.note) lines.push('', q.note)
         return lines.join('\n')
       })

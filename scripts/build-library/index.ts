@@ -23,10 +23,17 @@ const MIRROR = (process.env.GUTENBERG_MIRROR ?? 'https://www.gutenberg.org').rep
 const USER_AGENT = 'EchtraLibraryBuilder/0.1 (non-commercial reader; one-time downloads, cached)'
 const DOWNLOAD_DELAY_MS = 2000
 
-type Collection = { id: string; title: string; description: string; books: { ebookNo: number; note?: string }[] }
+type Collection = {
+  id: string
+  title: string
+  description: string
+  books: { ebookNo: number; note?: string }[]
+}
 
 const args = process.argv.slice(2)
-const only = args.includes('--only') ? new Set(args[args.indexOf('--only') + 1].split(',').map(Number)) : undefined
+const only = args.includes('--only')
+  ? new Set(args[args.indexOf('--only') + 1].split(',').map(Number))
+  : undefined
 const refresh = args.includes('--refresh')
 
 const collections: Collection[] = []
@@ -35,7 +42,9 @@ for (const file of (await readdir(COLLECTIONS)).filter((f) => f.endsWith('.json'
 
 const wanted = new Map<number, string[]>()
 for (const c of collections)
-  for (const b of c.books) if (!only || only.has(b.ebookNo)) wanted.set(b.ebookNo, [...(wanted.get(b.ebookNo) ?? []), c.id])
+  for (const b of c.books)
+    if (!only || only.has(b.ebookNo))
+      wanted.set(b.ebookNo, [...(wanted.get(b.ebookNo) ?? []), c.id])
 
 await mkdir(CACHE, { recursive: true })
 await mkdir(join(OUT, 'books'), { recursive: true })
@@ -53,7 +62,8 @@ for (const [ebookNo, inCollections] of wanted) {
     await rm(dir, { recursive: true, force: true })
     await mkdir(join(dir, 'images'), { recursive: true })
 
-    for (const [i, ch] of parsed.chapters.entries()) await writeFile(join(dir, `ch-${i}.html`), ch.html)
+    for (const [i, ch] of parsed.chapters.entries())
+      await writeFile(join(dir, `ch-${i}.html`), ch.html)
     for (const [name, data] of parsed.images) await writeFile(join(dir, 'images', name), data)
     if (parsed.cover) await writeFile(join(dir, parsed.cover.name), parsed.cover.data)
     if (parsed.license) await writeFile(join(dir, 'license.html'), parsed.license)
@@ -74,7 +84,12 @@ for (const [ebookNo, inCollections] of wanted) {
         processed: new Date().toISOString().slice(0, 10),
       },
       toc: parsed.toc,
-      chapters: parsed.chapters.map((ch, index) => ({ index, title: ch.title, file: `ch-${index}.html`, words: ch.words })),
+      chapters: parsed.chapters.map((ch, index) => ({
+        index,
+        title: ch.title,
+        file: `ch-${index}.html`,
+        words: ch.words,
+      })),
       anchors: parsed.anchors,
       totalWords: parsed.chapters.reduce((n, ch) => n + ch.words, 0),
       hasLicense: Boolean(parsed.license),
@@ -82,8 +97,12 @@ for (const [ebookNo, inCollections] of wanted) {
     await writeFile(join(dir, 'manifest.json'), JSON.stringify(manifest))
 
     const flag = parsed.warnings.length ? ` ⚠ ${parsed.warnings.join('; ')}` : ''
-    console.log(`✓ ${id} ${parsed.title} — ${parsed.chapters.length} chapters, ${parsed.toc.length} TOC entries${flag}`)
-    report.push(`| ${id} | ${parsed.title} | ${parsed.chapters.length} | ${parsed.toc.length} | ${parsed.warnings.join('; ')} |`)
+    console.log(
+      `✓ ${id} ${parsed.title} — ${parsed.chapters.length} chapters, ${parsed.toc.length} TOC entries${flag}`,
+    )
+    report.push(
+      `| ${id} | ${parsed.title} | ${parsed.chapters.length} | ${parsed.toc.length} | ${parsed.warnings.join('; ')} |`,
+    )
   } catch (err) {
     console.error(`✗ ${id}: ${(err as Error).message}`)
     report.push(`| ${id} | (failed) | | | ${(err as Error).message} |`)
@@ -97,8 +116,15 @@ for (const dir of await readdir(join(OUT, 'books'))) {
   if (!existsSync(path)) continue
   const m: BookManifest = JSON.parse(await readFile(path, 'utf8'))
   books.push({
-    id: m.id, ebookNo: m.source.ebookNo, title: m.title, authors: m.authors, language: m.language,
-    subjects: m.subjects, collections: m.collections, cover: m.cover, totalWords: m.totalWords,
+    id: m.id,
+    ebookNo: m.source.ebookNo,
+    title: m.title,
+    authors: m.authors,
+    language: m.language,
+    subjects: m.subjects,
+    collections: m.collections,
+    cover: m.cover,
+    totalWords: m.totalWords,
   })
 }
 const catalog: Catalog = {
@@ -121,7 +147,9 @@ async function getEpub(ebookNo: number): Promise<Uint8Array> {
     const wait = lastDownload + DOWNLOAD_DELAY_MS - Date.now()
     if (wait > 0) await new Promise((r) => setTimeout(r, wait))
     lastDownload = Date.now()
-    const res = await fetch(`${MIRROR}/cache/epub/${ebookNo}/${name}`, { headers: { 'User-Agent': USER_AGENT } })
+    const res = await fetch(`${MIRROR}/cache/epub/${ebookNo}/${name}`, {
+      headers: { 'User-Agent': USER_AGENT },
+    })
     if (!res.ok) continue
     const data = new Uint8Array(await res.arrayBuffer())
     await writeFile(cached, data)

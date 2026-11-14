@@ -12,8 +12,11 @@ import { ErrorNote, Spinner } from '../../ui/AppShell.tsx'
 export function DiscoverPage() {
   const catalog = useCatalog()
   const [query, setQuery] = useState('')
-  // oxlint-disable-next-line unicorn/no-array-reverse -- Dexie's Collection.reverse() sets the query order; it isn't Array#reverse
-  const recent = useLiveQuery(() => db.positions.orderBy('updatedAt').reverse().limit(6).toArray(), [])
+  const recent = useLiveQuery(
+    // oxlint-disable-next-line unicorn/no-array-reverse -- Dexie's Collection.reverse() sets the query order; it isn't Array#reverse
+    () => db.positions.orderBy('updatedAt').reverse().limit(6).toArray(),
+    [],
+  )
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -35,7 +38,10 @@ export function DiscoverPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="relative max-w-xl">
-        <Search className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-muted" aria-hidden />
+        <Search
+          className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-muted"
+          aria-hidden
+        />
         <input
           type="search"
           value={query}
@@ -63,7 +69,10 @@ export function DiscoverPage() {
                   <Link key={book.id} to={`/read/${book.id}`} className="w-28 shrink-0">
                     <Cover book={book} />
                     <div className="mt-2 h-1 overflow-hidden rounded-full bg-surface-2">
-                      <div className="h-full bg-accent" style={{ width: `${Math.round(percent * 100)}%` }} />
+                      <div
+                        className="h-full bg-accent"
+                        style={{ width: `${Math.round(percent * 100)}%` }}
+                      />
                     </div>
                   </Link>
                 ))}
@@ -94,10 +103,16 @@ function BookGrid({ books }: { books: CatalogEntry[] }) {
       {books.map((book) => (
         <li key={book.id}>
           <Link to={`/book/${book.id}`} className="group block">
-            <Cover book={book} className="transition-transform duration-300 group-hover:-translate-y-1" />
-            <h3 className="mt-3 line-clamp-2 text-sm leading-snug font-medium text-fg">{shortTitle(book.title)}</h3>
+            <Cover
+              book={book}
+              className="transition-transform duration-300 group-hover:-translate-y-1"
+            />
+            <h3 className="mt-3 line-clamp-2 text-sm leading-snug font-medium text-fg">
+              {shortTitle(book.title)}
+            </h3>
             <p className="mt-0.5 line-clamp-1 text-xs text-muted">
-              {book.authors.map(authorName).join(', ') || 'Anonymous'} · {readingTime(book.totalWords)}
+              {book.authors.map(authorName).join(', ') || 'Anonymous'} ·{' '}
+              {readingTime(book.totalWords)}
             </p>
           </Link>
         </li>

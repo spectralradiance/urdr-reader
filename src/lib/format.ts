@@ -15,8 +15,12 @@ export function displayHeading(text: string): string {
   return t
     .toLowerCase()
     .replace(/(^|[\s(“"'-])(\p{L})/gu, (_, pre: string, ch: string) => pre + ch.toUpperCase())
-    .replace(/\b(Of|The|And|In|On|To|A|An|Or|For|At|By|With)\b/g, (w, _1, offset: number) => (offset === 0 ? w : w.toLowerCase()))
-    .replace(/\b([IVXLC]+)\b/gi, (m) => (/^[ivxlc]+$/i.test(m) && m.length <= 6 ? m.toUpperCase() : m))
+    .replace(/\b(Of|The|And|In|On|To|A|An|Or|For|At|By|With)\b/g, (w, _1, offset: number) =>
+      offset === 0 ? w : w.toLowerCase(),
+    )
+    .replace(/\b([IVXLC]+)\b/gi, (m) =>
+      /^[ivxlc]+$/i.test(m) && m.length <= 6 ? m.toUpperCase() : m,
+    )
 }
 
 /** "Homer" / "Butler, Samuel" → "Samuel Butler" */

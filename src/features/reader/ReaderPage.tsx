@@ -57,19 +57,32 @@ export function ReaderPage() {
       navigate(`/read/${id}/${saved.position?.chapterIndex ?? 0}`, { replace: true })
   }, [id, chapter, saved, navigate])
 
-  if (manifest.isLoading || chapter === undefined || !saved || saved.id !== id) return <Spinner label="Opening book…" />
-  if (manifest.error || !manifest.data) return <ErrorNote error={manifest.error ?? 'Book not found'} />
+  if (manifest.isLoading || chapter === undefined || !saved || saved.id !== id)
+    return <Spinner label="Opening book…" />
+  if (manifest.error || !manifest.data)
+    return <ErrorNote error={manifest.error ?? 'Book not found'} />
   const index = Math.min(Math.max(0, Number(chapter) || 0), manifest.data.chapters.length - 1)
   return <Reader book={manifest.data} index={index} saved={saved.position} />
 }
 
-function Reader({ book, index, saved }: { book: BookManifest; index: number; saved: ReadingPosition | null }) {
+function Reader({
+  book,
+  index,
+  saved,
+}: {
+  book: BookManifest
+  index: number
+  saved: ReadingPosition | null
+}) {
   const navigate = useNavigate()
   const location = useLocation()
   const [settings, updateSettings] = useSettings()
   const chapter = book.chapters[index]
   const raw = useChapterHtml(book.id, chapter.file)
-  const html = useMemo(() => (raw.data ? prepareChapter(book.id, raw.data) : ''), [book.id, raw.data])
+  const html = useMemo(
+    () => (raw.data ? prepareChapter(book.id, raw.data) : ''),
+    [book.id, raw.data],
+  )
 
   const contentRef = useRef<HTMLDivElement>(null)
   useQuoteHighlights(contentRef, book.id, index, html)
@@ -91,7 +104,14 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
   // Keep the book on the shelf once opened.
   useEffect(() => {
     db.shelf.get(book.id).then((s) => {
-      if (!s) db.shelf.put({ bookId: book.id, title: book.title, authors: book.authors, cover: book.cover, addedAt: Date.now() })
+      if (!s)
+        db.shelf.put({
+          bookId: book.id,
+          title: book.title,
+          authors: book.authors,
+          cover: book.cover,
+          addedAt: Date.now(),
+        })
     })
   }, [book])
 
@@ -110,7 +130,10 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
     pendingSave.current = null
   }, [])
 
-  const wordsBefore = useMemo(() => book.chapters.slice(0, index).reduce((n, c) => n + c.words, 0), [book, index])
+  const wordsBefore = useMemo(
+    () => book.chapters.slice(0, index).reduce((n, c) => n + c.words, 0),
+    [book, index],
+  )
 
   const capture = useCallback(
     (currentPage = page, totalPages = pages) => {
@@ -137,7 +160,18 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
       window.clearTimeout(saveTimer.current)
       saveTimer.current = window.setTimeout(flushSave, 400)
     },
-    [book, index, chapter.words, wordsBefore, paged, page, pages, layout.step, layout.width, flushSave],
+    [
+      book,
+      index,
+      chapter.words,
+      wordsBefore,
+      paged,
+      page,
+      pages,
+      layout.step,
+      layout.width,
+      flushSave,
+    ],
   )
 
   // Don't lose the last position when the tab is hidden, closed or the reader unmounts.
@@ -163,41 +197,59 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
     const isFirstLayout = laidOutHtml.current === ''
     laidOutHtml.current = html
     const state = location.state as NavState
-    const hashTarget = isNewChapter && location.hash ? content.querySelector(`[id="${CSS.escape(location.hash.slice(1))}"]`) : null
+    const hashTarget =
+      isNewChapter && location.hash
+        ? content.querySelector(`[id="${CSS.escape(location.hash.slice(1))}"]`)
+        : null
     // On opening the book (incl. a reload), resume the saved spot if it's in this chapter.
     const restore = state?.restore ?? (isFirstLayout && !state ? saved : null)
     let target: Anchor | Element | 'end' = anchorRef.current
     if (isNewChapter) {
       if (hashTarget) target = hashTarget
       else if (state?.at === 'end') target = 'end'
-      else if (restore?.chapterIndex === index) target = { block: restore.block, offset: restore.offset }
+      else if (restore?.chapterIndex === index)
+        target = { block: restore.block, offset: restore.offset }
       else target = { block: 0, offset: 0 }
     }
 
     if (paged) {
       const total = countPages(content, layout.columnStep, layout.columns)
       const p =
-        target === 'end' ? total - 1
-        : target instanceof Element ? pageOfElement(content, target, layout.step)
-        : pageOfAnchor(content, target, layout.step)
+        target === 'end'
+          ? total - 1
+          : target instanceof Element
+            ? pageOfElement(content, target, layout.step)
+            : pageOfAnchor(content, target, layout.step)
       const clamped = Math.min(Math.max(0, p), total - 1)
       setPages(total)
       setPage(clamped)
       capture(clamped, total)
     } else {
-      if (target === 'end') window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })
+      if (target === 'end')
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })
       else if (target instanceof Element) scrollToElement(target, HEADER + 16)
       else scrollToAnchor(content, target, HEADER)
       capture()
     }
     // capture/location intentionally excluded: this runs on content or layout changes only.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [html, paged, layout.width, layout.height, layout.columns, settings.size, settings.leading, settings.font, settings.justify])
+  }, [
+    html,
+    paged,
+    layout.width,
+    layout.height,
+    layout.columns,
+    settings.size,
+    settings.leading,
+    settings.font,
+    settings.justify,
+  ])
 
   // Wait for web fonts, then re-anchor (metrics change once they load).
   useEffect(() => {
     document.fonts?.ready.then(() => {
-      if (paged && contentRef.current) setPages(countPages(contentRef.current, layout.columnStep, layout.columns))
+      if (paged && contentRef.current)
+        setPages(countPages(contentRef.current, layout.columnStep, layout.columns))
     })
   }, [html, paged, layout.columnStep, layout.columns])
 
@@ -266,7 +318,13 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
 
   const goBack = () => {
     if (!back) return
-    const restore: ReadingPosition = { bookId: book.id, chapterIndex: back.chapter, ...back.anchor, percent: 0, updatedAt: 0 }
+    const restore: ReadingPosition = {
+      bookId: book.id,
+      chapterIndex: back.chapter,
+      ...back.anchor,
+      percent: 0,
+      updatedAt: 0,
+    }
     setBack(null)
     if (back.chapter === index) {
       anchorRef.current = back.anchor
@@ -309,7 +367,11 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
   useEffect(() => {
     let lock: WakeLockSentinel | undefined
     const request = () => {
-      if (document.visibilityState === 'visible') navigator.wakeLock?.request('screen').then((l) => (lock = l), () => {})
+      if (document.visibilityState === 'visible')
+        navigator.wakeLock?.request('screen').then(
+          (l) => (lock = l),
+          () => {},
+        )
     }
     request()
     document.addEventListener('visibilitychange', request)
@@ -356,7 +418,9 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
   } as CSSProperties
 
   const minutesLeft = readingTime(chapter.words * (1 - chapterFraction))
-  const bookPercent = Math.round(((wordsBefore + chapterFraction * chapter.words) / Math.max(1, book.totalWords)) * 100)
+  const bookPercent = Math.round(
+    ((wordsBefore + chapterFraction * chapter.words) / Math.max(1, book.totalWords)) * 100,
+  )
   const showChrome = chrome || panel !== null
 
   return (
@@ -365,17 +429,31 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
       <header
         className={`fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-bg/95 px-2 backdrop-blur transition-transform duration-200 motion-reduce:transition-none ${showChrome ? '' : '-translate-y-full'}`}
       >
-        <Link to={`/book/${book.id}`} className="grid size-10 place-items-center rounded-full hover:bg-surface-2" aria-label="Back to book">
+        <Link
+          to={`/book/${book.id}`}
+          className="grid size-10 place-items-center rounded-full hover:bg-surface-2"
+          aria-label="Back to book"
+        >
           <ArrowLeft className="size-5" aria-hidden />
         </Link>
         <div className="min-w-0 flex-1 text-center">
           <p className="truncate text-xs text-muted">{shortTitle(book.title)}</p>
           <p className="truncate text-sm font-medium">{displayHeading(chapter.title)}</p>
         </div>
-        <button type="button" onClick={() => setPanel(panel === 'toc' ? null : 'toc')} className="grid size-10 place-items-center rounded-full hover:bg-surface-2" aria-label="Table of contents (t)">
+        <button
+          type="button"
+          onClick={() => setPanel(panel === 'toc' ? null : 'toc')}
+          className="grid size-10 place-items-center rounded-full hover:bg-surface-2"
+          aria-label="Table of contents (t)"
+        >
           <List className="size-5" aria-hidden />
         </button>
-        <button type="button" onClick={() => setPanel(panel === 'settings' ? null : 'settings')} className="grid size-10 place-items-center rounded-full hover:bg-surface-2" aria-label="Reading settings">
+        <button
+          type="button"
+          onClick={() => setPanel(panel === 'settings' ? null : 'settings')}
+          className="grid size-10 place-items-center rounded-full hover:bg-surface-2"
+          aria-label="Reading settings"
+        >
           <Type className="size-5" aria-hidden />
         </button>
       </header>
@@ -388,7 +466,12 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
         // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- tap zones; the keyboard turns pages with ←/→ and PageUp/PageDown
         <div
           className="reader-paged fixed select-text"
-          style={{ top: HEADER, height: layout.height, left: (viewport.w - layout.width) / 2, width: layout.width }}
+          style={{
+            top: HEADER,
+            height: layout.height,
+            left: (viewport.w - layout.width) / 2,
+            width: layout.width,
+          }}
           onClick={onPagedClick}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
@@ -410,21 +493,47 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
           />
         </div>
       ) : (
-        <article className="mx-auto px-5 pt-20 pb-36" style={{ maxWidth: `calc(${settings.width} * ${settings.size}px + 40px)` }}>
+        <article
+          className="mx-auto px-5 pt-20 pb-36"
+          style={{ maxWidth: `calc(${settings.width} * ${settings.size}px + 40px)` }}
+        >
           {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- delegates clicks on in-book links, which are focusable and fire click on Enter */}
-          <div ref={contentRef} lang={book.language} className="reader-content" style={readerVars} onClick={onContentClick} dangerouslySetInnerHTML={{ __html: html }} />
+          <div
+            ref={contentRef}
+            lang={book.language}
+            className="reader-content"
+            style={readerVars}
+            onClick={onContentClick}
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
           <nav className="mt-16 flex items-center justify-between gap-4 border-t border-border pt-6 text-sm">
             {index > 0 ? (
-              <button type="button" onClick={() => goChapter(index - 1)} className="flex items-center gap-1 text-muted hover:text-fg">
+              <button
+                type="button"
+                onClick={() => goChapter(index - 1)}
+                className="flex items-center gap-1 text-muted hover:text-fg"
+              >
                 <ChevronLeft className="size-4" aria-hidden /> Previous
               </button>
-            ) : <span />}
+            ) : (
+              <span />
+            )}
             {index < book.chapters.length - 1 ? (
-              <button type="button" onClick={() => goChapter(index + 1)} className="flex items-center gap-1 rounded-full bg-accent px-5 py-2 font-medium text-accent-fg">
-                {displayHeading(book.chapters[index + 1].title)} <ChevronRight className="size-4" aria-hidden />
+              <button
+                type="button"
+                onClick={() => goChapter(index + 1)}
+                className="flex items-center gap-1 rounded-full bg-accent px-5 py-2 font-medium text-accent-fg"
+              >
+                {displayHeading(book.chapters[index + 1].title)}{' '}
+                <ChevronRight className="size-4" aria-hidden />
               </button>
             ) : (
-              <Link to={`/book/${book.id}`} className="rounded-full bg-accent px-5 py-2 font-medium text-accent-fg">Finished · back to book</Link>
+              <Link
+                to={`/book/${book.id}`}
+                className="rounded-full bg-accent px-5 py-2 font-medium text-accent-fg"
+              >
+                Finished · back to book
+              </Link>
             )}
           </nav>
         </article>
@@ -436,7 +545,13 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
         style={{ height: FOOTER }}
       >
         <div className="mx-auto flex h-full max-w-3xl items-center gap-3 px-3 text-xs text-muted">
-          <button type="button" onClick={() => turn(-1)} disabled={index === 0 && (!paged || page === 0)} className="grid size-9 place-items-center rounded-full hover:bg-surface-2 disabled:opacity-30" aria-label={paged ? 'Previous page' : 'Previous chapter'}>
+          <button
+            type="button"
+            onClick={() => turn(-1)}
+            disabled={index === 0 && (!paged || page === 0)}
+            className="grid size-9 place-items-center rounded-full hover:bg-surface-2 disabled:opacity-30"
+            aria-label={paged ? 'Previous page' : 'Previous chapter'}
+          >
             <ChevronLeft className="size-5" aria-hidden />
           </button>
           <div className="min-w-0 flex-1">
@@ -446,10 +561,18 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
                 Ch. {index + 1} of {book.chapters.length}
                 {paged && ` · page ${page + 1} of ${pages}`}
               </span>
-              <span className="shrink-0">{minutesLeft} left in chapter · {bookPercent}%</span>
+              <span className="shrink-0">
+                {minutesLeft} left in chapter · {bookPercent}%
+              </span>
             </div>
           </div>
-          <button type="button" onClick={() => turn(1)} disabled={index === book.chapters.length - 1 && (!paged || page >= pages - 1)} className="grid size-9 place-items-center rounded-full hover:bg-surface-2 disabled:opacity-30" aria-label={paged ? 'Next page' : 'Next chapter'}>
+          <button
+            type="button"
+            onClick={() => turn(1)}
+            disabled={index === book.chapters.length - 1 && (!paged || page >= pages - 1)}
+            className="grid size-9 place-items-center rounded-full hover:bg-surface-2 disabled:opacity-30"
+            aria-label={paged ? 'Next page' : 'Next chapter'}
+          >
             <ChevronRight className="size-5" aria-hidden />
           </button>
         </div>
@@ -458,16 +581,27 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
       {back && (
         // Two sibling buttons: a control nested inside a <button> can't be reached by keyboard.
         <div className="fixed bottom-20 left-1/2 z-30 flex -translate-x-1/2 items-center rounded-full border border-border bg-surface text-sm shadow-lg">
-          <button type="button" onClick={goBack} className="flex items-center gap-2 py-2 pr-1.5 pl-4">
+          <button
+            type="button"
+            onClick={goBack}
+            className="flex items-center gap-2 py-2 pr-1.5 pl-4"
+          >
             <Undo2 className="size-4" aria-hidden /> Back to where you were
           </button>
-          <button type="button" aria-label="Dismiss" onClick={() => setBack(null)} className="py-2 pr-4 pl-1.5 text-muted">
+          <button
+            type="button"
+            aria-label="Dismiss"
+            onClick={() => setBack(null)}
+            className="py-2 pr-4 pl-1.5 text-muted"
+          >
             <X className="size-3.5" aria-hidden />
           </button>
         </div>
       )}
 
-      {!raw.isLoading && <SelectionToolbar contentRef={contentRef} book={book} chapterIndex={index} />}
+      {!raw.isLoading && (
+        <SelectionToolbar contentRef={contentRef} book={book} chapterIndex={index} />
+      )}
 
       {panel === 'toc' && (
         <Sheet side="left" title="Contents" onClose={() => setPanel(null)}>
@@ -484,7 +618,11 @@ function Reader({ book, index, saved }: { book: BookManifest; index: number; sav
       )}
       {panel === 'settings' && (
         <Sheet side="right" title="Reading settings" onClose={() => setPanel(null)}>
-          <SettingsPanel settings={settings} update={updateSettings} canSpread={viewport.w >= 1000} />
+          <SettingsPanel
+            settings={settings}
+            update={updateSettings}
+            canSpread={viewport.w >= 1000}
+          />
         </Sheet>
       )}
     </div>
@@ -506,7 +644,15 @@ function pagedLayout(s: ReaderSettings, vw: number, vh: number) {
   }
 }
 
-function ChapterScrubber({ book, index, onCommit }: { book: BookManifest; index: number; onCommit: (n: number) => void }) {
+function ChapterScrubber({
+  book,
+  index,
+  onCommit,
+}: {
+  book: BookManifest
+  index: number
+  onCommit: (n: number) => void
+}) {
   const [value, setValue] = useState<number | null>(null)
   const shown = value ?? index
   return (
@@ -539,15 +685,32 @@ function ChapterScrubber({ book, index, onCommit }: { book: BookManifest; index:
   )
 }
 
-function Sheet({ side, title, onClose, children }: { side: 'left' | 'right'; title: string; onClose: () => void; children: React.ReactNode }) {
+function Sheet({
+  side,
+  title,
+  onClose,
+  children,
+}: {
+  side: 'left' | 'right'
+  title: string
+  onClose: () => void
+  children: React.ReactNode
+}) {
   return (
     <div className="fixed inset-0 z-40" role="dialog" aria-label={title}>
       {/* oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- the backdrop; Escape and the Close button close the sheet from the keyboard */}
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className={`absolute inset-y-0 ${side === 'left' ? 'left-0' : 'right-0'} flex w-[min(380px,90vw)] flex-col border-border bg-bg shadow-xl ${side === 'left' ? 'border-r' : 'border-l'}`}>
+      <div
+        className={`absolute inset-y-0 ${side === 'left' ? 'left-0' : 'right-0'} flex w-[min(380px,90vw)] flex-col border-border bg-bg shadow-xl ${side === 'left' ? 'border-r' : 'border-l'}`}
+      >
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
           <h2 className="font-medium">{title}</h2>
-          <button type="button" onClick={onClose} className="grid size-9 place-items-center rounded-full hover:bg-surface-2" aria-label="Close">
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid size-9 place-items-center rounded-full hover:bg-surface-2"
+            aria-label="Close"
+          >
             <X className="size-5" aria-hidden />
           </button>
         </div>

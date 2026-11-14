@@ -37,15 +37,23 @@ export function scrollToElement(el: Element, topInset: number) {
 // Column positions are measured from the content box's left edge, which moves with the transform.
 
 /** First block on `page`. Measured relative to the content box, so it's correct mid-animation. */
-export function readPagedAnchor(content: HTMLElement, page: number, step: number, width: number): Anchor {
+export function readPagedAnchor(
+  content: HTMLElement,
+  page: number,
+  step: number,
+  width: number,
+): Anchor {
   const origin = content.getBoundingClientRect().left
   const start = page * step
   const end = start + width
   const blocks = content.children
   for (let i = 0; i < blocks.length; i++) {
     const rects = [...blocks[i].getClientRects()]
-    const visible = rects.findIndex((r) => r.right - origin > start + 1 && r.left - origin < end - 1 && r.height > 0)
-    if (visible >= 0) return { block: i, offset: Math.round((visible / rects.length) * textLength(blocks[i])) }
+    const visible = rects.findIndex(
+      (r) => r.right - origin > start + 1 && r.left - origin < end - 1 && r.height > 0,
+    )
+    if (visible >= 0)
+      return { block: i, offset: Math.round((visible / rects.length) * textLength(blocks[i])) }
   }
   return { block: 0, offset: 0 }
 }
@@ -65,7 +73,11 @@ export function pageOfElement(content: HTMLElement, el: Element, step: number): 
 }
 
 /** Total pages: find the column holding the end of the last block. */
-export function countPages(content: HTMLElement, columnStep: number, columnsPerPage: number): number {
+export function countPages(
+  content: HTMLElement,
+  columnStep: number,
+  columnsPerPage: number,
+): number {
   const last = content.lastElementChild
   const rects = last ? [...last.getClientRects()] : []
   if (rects.length === 0) return 1

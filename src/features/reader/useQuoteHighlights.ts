@@ -10,7 +10,12 @@ const HIGHLIGHT = 'echtra-quote'
  * ranges without touching the DOM, so block indexes and reading positions stay stable.
  * Browsers without the API simply show no highlight.
  */
-export function useQuoteHighlights(contentRef: RefObject<HTMLElement | null>, bookId: string, chapterIndex: number, html: string) {
+export function useQuoteHighlights(
+  contentRef: RefObject<HTMLElement | null>,
+  bookId: string,
+  chapterIndex: number,
+  html: string,
+) {
   const quotes = useLiveQuery(
     () => db.quotes.where('[bookId+chapterIndex]').equals([bookId, chapterIndex]).toArray(),
     [bookId, chapterIndex],

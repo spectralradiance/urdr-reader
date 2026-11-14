@@ -17,17 +17,27 @@ export function BookPage() {
   const manifest = useManifest(id)
   const position = useLiveQuery(() => (id ? db.positions.get(id) : undefined), [id])
   const onShelf = useLiveQuery(() => (id ? db.shelf.get(id) : undefined), [id])
-  const quoteCount = useLiveQuery(() => (id ? db.quotes.where('bookId').equals(id).count() : 0), [id])
+  const quoteCount = useLiveQuery(
+    () => (id ? db.quotes.where('bookId').equals(id).count() : 0),
+    [id],
+  )
 
   if (manifest.isLoading) return <Spinner />
-  if (manifest.error || !manifest.data) return <ErrorNote error={manifest.error ?? 'Book not found'} />
+  if (manifest.error || !manifest.data)
+    return <ErrorNote error={manifest.error ?? 'Book not found'} />
   const book = manifest.data
   const sub = subtitle(book.title)
 
   const toggleShelf = () =>
     onShelf
       ? db.shelf.delete(book.id)
-      : db.shelf.put({ bookId: book.id, title: book.title, authors: book.authors, cover: book.cover, addedAt: Date.now() })
+      : db.shelf.put({
+          bookId: book.id,
+          title: book.title,
+          authors: book.authors,
+          cover: book.cover,
+          addedAt: Date.now(),
+        })
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -37,11 +47,14 @@ export function BookPage() {
         </div>
 
         <div>
-          <h1 className="font-serif text-3xl leading-tight font-semibold sm:text-4xl">{shortTitle(book.title)}</h1>
+          <h1 className="font-serif text-3xl leading-tight font-semibold sm:text-4xl">
+            {shortTitle(book.title)}
+          </h1>
           {sub && <p className="mt-2 font-serif text-lg text-muted italic">{sub}</p>}
           <p className="mt-3 text-fg">{book.authors.map(authorName).join(', ') || 'Anonymous'}</p>
           <p className="mt-1 text-sm text-muted">
-            {book.chapters.length} chapters · about {readingTime(book.totalWords)} · {book.totalWords.toLocaleString()} words
+            {book.chapters.length} chapters · about {readingTime(book.totalWords)} ·{' '}
+            {book.totalWords.toLocaleString()} words
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -57,7 +70,11 @@ export function BookPage() {
               onClick={toggleShelf}
               className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm hover:bg-surface-2"
             >
-              {onShelf ? <Check className="size-4" aria-hidden /> : <BookmarkPlus className="size-4" aria-hidden />}
+              {onShelf ? (
+                <Check className="size-4" aria-hidden />
+              ) : (
+                <BookmarkPlus className="size-4" aria-hidden />
+              )}
               {onShelf ? 'In your library' : 'Add to library'}
             </button>
             {quoteCount ? (
@@ -85,7 +102,13 @@ export function BookPage() {
             <section>
               <h2 className="mb-3 font-serif text-xl">Contents</h2>
               <div className="rounded-lg border border-border bg-surface p-2">
-                <TocList book={book} currentChapter={position?.chapterIndex} linkTo={(e) => `/read/${book.id}/${e.chapterIndex}${e.anchor ? `#${e.anchor}` : ''}`} />
+                <TocList
+                  book={book}
+                  currentChapter={position?.chapterIndex}
+                  linkTo={(e) =>
+                    `/read/${book.id}/${e.chapterIndex}${e.anchor ? `#${e.anchor}` : ''}`
+                  }
+                />
               </div>
             </section>
 
@@ -107,8 +130,8 @@ function Citation({ book }: { book: BookManifest }) {
     <section className="rounded-lg border border-border p-4 text-sm">
       <h2 className="font-medium">Source</h2>
       <p className="mt-2 text-muted">
-        {book.source.name} eBook #{book.source.ebookNo}. Public domain in the USA. Prepared for Echtra on{' '}
-        {book.source.processed}.
+        {book.source.name} eBook #{book.source.ebookNo}. Public domain in the USA. Prepared for
+        Echtra on {book.source.processed}.
       </p>
       <a
         href={book.source.url}
@@ -120,7 +143,11 @@ function Citation({ book }: { book: BookManifest }) {
       </a>
       {book.hasLicense && (
         <div className="mt-3">
-          <button type="button" onClick={() => setShowLicense((v) => !v)} className="text-muted underline">
+          <button
+            type="button"
+            onClick={() => setShowLicense((v) => !v)}
+            className="text-muted underline"
+          >
             {showLicense ? 'Hide' : 'Show'} the Project Gutenberg license
           </button>
           {showLicense && license.data && (

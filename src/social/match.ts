@@ -7,7 +7,13 @@ import type { SocialItem } from './types.ts'
 const STOP = new Set(['the', 'a', 'an', 'of', 'and', 'or', 'vol', 'volume', 'book', 'books'])
 
 const norm = (s: string) =>
-  s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim()
+  s
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
 
 export function bookMatcher(book: Pick<BookManifest, 'title' | 'authors' | 'source'>) {
   const title = norm(shortTitle(book.title).replace(/,.*$/, ''))
@@ -21,6 +27,10 @@ export function bookMatcher(book: Pick<BookManifest, 'title' | 'authors' | 'sour
     if (!text.includes(` ${title} `) && !text.includes(` ${titleWords.join(' ')} `)) return false
     // A one-word title ("Beowulf", "Iliad") is distinctive alone, as is a long title;
     // two-word titles need the author too.
-    return titleWords.length <= 1 || titleWords.length >= 3 || surnames.some((s) => text.includes(` ${s} `))
+    return (
+      titleWords.length <= 1 ||
+      titleWords.length >= 3 ||
+      surnames.some((s) => text.includes(` ${s} `))
+    )
   }
 }

@@ -34,7 +34,9 @@ export function useMergedTimeline(follows: Follow[] | undefined) {
   return {
     items,
     loading: results.some((r) => r.isLoading),
-    errors: results.flatMap((r, i) => (r.error && follows ? [{ follow: follows[i], message: r.error.message }] : [])),
+    errors: results.flatMap((r, i) =>
+      r.error && follows ? [{ follow: follows[i], message: r.error.message }] : [],
+    ),
     refetch: () => results.forEach((r) => r.refetch()),
   }
 }
